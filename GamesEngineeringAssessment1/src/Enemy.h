@@ -1,0 +1,28 @@
+#pragma once
+
+#include "CustomBase.h"
+#include "Sprite.h"
+
+class Game;
+
+enum EnemyType {
+	Zombie, Archer, Tank, ENEMY_TYPE_COUNT
+};
+
+const int ENEMY_HEALTH_BY_TYPE[] = { 100, 50, 200 };
+
+class Enemy {
+public:
+	Enemy() = default;
+
+	void Init(Game* game, EnemyType type);
+	void Update(Game* game);
+
+	EnemyType type;
+	Sprite sprite;
+	Vec2 position;
+
+	float speed = 100.0f;
+	int max_health;
+	int current_health;
+};

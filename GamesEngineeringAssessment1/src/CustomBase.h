@@ -42,3 +42,4 @@ struct Vec2 {
 };
 
 Vec2 NormalizeVec2(const Vec2& vec);
+

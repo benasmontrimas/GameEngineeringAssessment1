@@ -2,13 +2,19 @@
 
 #include "GamesEngineeringBase.h"
 #include "CustomBase.h"
+#include "Sprite.h"
 
+class Game;
+
+// TODO: Create a weapon class, add slots for the weapons on the player, and as they equip them,
+// Loop this list and activate them. Simple.
 class Player {
 public:
-	Player() : position(Vec2{}) {}
+	Player() = default;
 
-	void Init();
+	void Init(Game* game);
+	void Update(Game* game);
 
 	Vec2 position;
-	GamesEngineeringBase::Image sprite;
+	Sprite sprite;
 };
