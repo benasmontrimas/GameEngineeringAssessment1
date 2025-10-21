@@ -2,6 +2,7 @@
 
 #include "CustomBase.h"
 #include "Sprite.h"
+#include "Collider.h"
 
 class Game;
 
@@ -20,6 +21,7 @@ public:
 
 	EnemyType type;
 	Sprite sprite;
+	Collider collider{};
 	Vec2 position;
 
 	float speed = 100.0f;

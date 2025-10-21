@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Enemy.h"
+#include "Map.h"
+#include "HUD.h"
 #include "Sprite.h"
 
 static const int MAX_ENEMIES = 1000;
@@ -14,6 +16,22 @@ enum GameImages {
 	ZombieBase,
 	ArcherBase,
 	TankBase,
+
+	ItemBorder,
+
+	AOEWeapon,
+
+	Tile0,
+	Tile1,
+	Tile2,
+	Tile3,
+	Tile4,
+	Tile5,
+	Tile6,
+	Tile7,
+	Tile8,
+	Tile9,
+	Tile10,
 
 	GAME_IMAGE_COUNT
 };
@@ -39,9 +57,11 @@ public:
 	GamesEngineeringBase::Timer timer{};
 
 	// Entities
+	TileMap level_map{};
 	Player player{};
 	Enemy enemies[MAX_ENEMIES];
 	Camera camera{};
+	HUD hud{};
 
 	// Other
 	int window_width;

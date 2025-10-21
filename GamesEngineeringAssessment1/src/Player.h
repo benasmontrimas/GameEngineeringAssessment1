@@ -3,6 +3,7 @@
 #include "GamesEngineeringBase.h"
 #include "CustomBase.h"
 #include "Sprite.h"
+#include "Collider.h"
 
 class Game;
 
@@ -15,6 +16,12 @@ public:
 	void Init(Game* game);
 	void Update(Game* game);
 
-	Vec2 position;
-	Sprite sprite;
+	Vec2 position{};
+	Sprite sprite{};
+	Collider collider{};
+
+	// Add weapons, one projectile one aoe. Need to get distance to enemies to attack closest.
+
+	float movement_speed{ 150 };
+	Vec2 movement_direction{};
 };

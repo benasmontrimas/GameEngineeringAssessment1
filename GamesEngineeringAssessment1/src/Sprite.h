@@ -3,6 +3,14 @@
 
 class Sprite {
 public:
-	const GamesEngineeringBase::Image* image;
-	int depth;
+	void Init(int count);
+	GamesEngineeringBase::Image* GetImage() const;
+
+	int image_count{};
+	GamesEngineeringBase::Image** images{ nullptr };
+	int depth{};
+
+	int current_frame{};
+	float current_frame_duration{0};
+	float animation_framerate{};
 };

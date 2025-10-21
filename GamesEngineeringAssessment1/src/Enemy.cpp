@@ -3,11 +3,14 @@
 #include <cassert>
 
 void Enemy::Init(Game* game, EnemyType _type) {
+	sprite.Init(1);
 
 	type = _type;
 	max_health = ENEMY_HEALTH_BY_TYPE[type];
 	current_health = max_health;
-	sprite.image = &game->images[ZombieBase + type];
+	sprite.images[0] = &game->images[ZombieBase + type];
+
+	collider.radius = 16.0f;
 }
 
 void Enemy::Update(Game* game) {
@@ -25,4 +28,6 @@ void Enemy::Update(Game* game) {
 	default:
 		assert("Enemy Type not implemented.");
 	}
+
+	collider.center = position;
 }
