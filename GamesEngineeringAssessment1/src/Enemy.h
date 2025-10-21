@@ -24,7 +24,7 @@ public:
 	Collider collider{};
 	Vec2 position;
 
-	float speed = 100.0f;
+	float speed = 50.0f;
 	int max_health;
 	int current_health;
 };

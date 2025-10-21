@@ -129,6 +129,7 @@
     <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\CustomBase.cpp" />
     <ClCompile Include="src\Enemy.cpp" />
+    <ClCompile Include="src\FontMap.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\HUD.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="src\Collider.h" />
     <ClInclude Include="src\CustomBase.h" />
     <ClInclude Include="src\Enemy.h" />
+    <ClInclude Include="src\FontMap.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GamesEngineeringBase.h" />
     <ClInclude Include="src\HUD.h" />

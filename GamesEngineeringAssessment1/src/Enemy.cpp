@@ -22,6 +22,9 @@ void Enemy::Update(Game* game) {
 	case Tank:
 		Vec2 move_direction = NormalizeVec2(game->player.position - position);
 		position = position + (move_direction * speed * game->delta_time);
+
+		if (move_direction.x < 0) sprite.flip = true;
+		else if (move_direction.x > 0) sprite.flip = false;
 		break;
 	case Archer:
 		break;

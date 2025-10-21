@@ -53,6 +53,7 @@ Vec2 NormalizeVec2(const Vec2& vec);
 // Does not do any checks for access and removal.
 template <typename T>
 class List {
+public:
 	T* data;
 	unsigned int size;
 

@@ -2,14 +2,17 @@
 #include "Game.h"
 
 void Player::Init(Game* game) {
-	sprite.Init(1);
-	sprite.images[0] = &game->images[PlayerBase];
+	sprite.Init(2);
+	sprite.images[0] = &game->images[PlayerWalk2];
+	sprite.images[1] = &game->images[PlayerWalk3];
+	sprite.animation_framerate = 4;
 
 	collider.radius = 16.0f;
 }
 
 void Player::Update(Game* game) {
 	sprite.depth = -position.y;
+	sprite.Update(game);
 
 	GamesEngineeringBase::Window& window = game->window;
 
@@ -24,5 +27,12 @@ void Player::Update(Game* game) {
 		position = position + movement_vector;
 	}
 
+	if (movement_direction.x < 0) sprite.flip = true;
+	else if (movement_direction.x > 0) sprite.flip = false;
+
 	collider.center = position;
+}
+
+void Player::Draw(Game* game) {
+	game->DrawImage(sprite, position);
 }

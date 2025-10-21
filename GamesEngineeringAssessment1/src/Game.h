@@ -7,12 +7,15 @@
 #include "Map.h"
 #include "HUD.h"
 #include "Sprite.h"
+#include "FontMap.h"
 
 static const int MAX_ENEMIES = 1000;
 
 // I will want to add animations at some point
 enum GameImages {
 	PlayerBase,
+	PlayerWalk2,
+	PlayerWalk3,
 	ZombieBase,
 	ArcherBase,
 	TankBase,
@@ -33,12 +36,19 @@ enum GameImages {
 	Tile9,
 	Tile10,
 
+	Font32pt,
+	Font16pt,
+
 	GAME_IMAGE_COUNT
 };
 
 class Game {
 public:
 	Game() = default;
+	~Game() = default;
+
+	Game(Game& g) = delete;
+	Game(Game&& g) = delete;
 
 	void Init();
 	void Run();
@@ -62,6 +72,9 @@ public:
 	Enemy enemies[MAX_ENEMIES];
 	Camera camera{};
 	HUD hud{};
+
+	FontMap font32;
+	FontMap font16;
 
 	// Other
 	int window_width;

@@ -15,6 +15,7 @@ public:
 
 	void Init(Game* game);
 	void Update(Game* game);
+	void Draw(Game* game);
 
 	Vec2 position{};
 	Sprite sprite{};
