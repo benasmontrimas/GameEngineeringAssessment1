@@ -1,5 +1,7 @@
-*/x64/
-*/Debug/
+/x64/
+/Debug/
 /.vs/
 *.exe
-*/resources_original/
+/resources_original/
+/GamesEngineeringAssessment1/resources_original/
+/GamesEngineeringAssessment1/x64
