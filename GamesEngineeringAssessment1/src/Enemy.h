@@ -10,13 +10,13 @@ enum EnemyType {
 	Zombie, Archer, Tank, ENEMY_TYPE_COUNT
 };
 
-const int ENEMY_HEALTH_BY_TYPE[] = { 100, 50, 200 };
+constexpr int ENEMY_HEALTH_BY_TYPE[] = { 100, 50, 200 };
 
 class Enemy {
 public:
 	Enemy() = default;
 
-	void Init(Game* game, EnemyType type);
+	void Init(Game* game, EnemyType enemy_type);
 	void Update(Game* game);
 
 	EnemyType type;

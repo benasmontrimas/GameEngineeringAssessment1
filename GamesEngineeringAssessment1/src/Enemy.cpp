@@ -2,10 +2,10 @@
 #include "Game.h"
 #include <cassert>
 
-void Enemy::Init(Game* game, EnemyType _type) {
+void Enemy::Init(Game* game, EnemyType enemy_type) {
 	sprite.Init(1);
 
-	type = _type;
+	type = enemy_type;
 	max_health = ENEMY_HEALTH_BY_TYPE[type];
 	current_health = max_health;
 	sprite.images[0] = &game->images[ZombieBase + type];
@@ -23,7 +23,7 @@ void Enemy::Update(Game* game) {
 		{
 			Vec2 move_direction = NormalizeVec2(game->player.position - position);
 			position = position + (move_direction * speed * game->delta_time);
-
+			
 			if (move_direction.x < 0) sprite.flip = true;
 			else if (move_direction.x > 0) sprite.flip = false;
 		}
