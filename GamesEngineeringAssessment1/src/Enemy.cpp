@@ -20,11 +20,13 @@ void Enemy::Update(Game* game) {
 	switch (type) {
 	case Zombie: // Zombie and tank have the same AI.
 	case Tank:
-		Vec2 move_direction = NormalizeVec2(game->player.position - position);
-		position = position + (move_direction * speed * game->delta_time);
+		{
+			Vec2 move_direction = NormalizeVec2(game->player.position - position);
+			position = position + (move_direction * speed * game->delta_time);
 
-		if (move_direction.x < 0) sprite.flip = true;
-		else if (move_direction.x > 0) sprite.flip = false;
+			if (move_direction.x < 0) sprite.flip = true;
+			else if (move_direction.x > 0) sprite.flip = false;
+		}
 		break;
 	case Archer:
 		break;
