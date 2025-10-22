@@ -9,10 +9,16 @@ class Game;
 class TileMap {
 public:
 	void Init(Game* game);
+	void Update(Game* game);
 
 	static const int MAP_SIZE = 10000;
 	const int MAP_WIDTH = 100;
 	int tile_size = 32;
+
+	int tiles_in_use = 0;
+	int tiles_in_row = 0;
+	int render_x;
+	int render_y;
 
 	Sprite tilemap[MAP_SIZE];
 };

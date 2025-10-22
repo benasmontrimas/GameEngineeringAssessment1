@@ -19,6 +19,8 @@ void FontMap::DrawString(Game* game, std::string string, const Vec2& position) {
 	for (int i = 0; i < string.size(); i++) {
 		char c = string[i];
 		if (c == ' ') continue;
+		if (c >= 'a' and c <= 'z') c -= 'a' - 'A'; // Set to the upper case equivelent letter as we dont support lower case.
+		if (c < '!' or c > 'Z') c = 'Z' + 1; // IF its an unsupported char, set to one of the invalid char lists;
 
 		int index_into_font_map = c - '!';
 
@@ -31,7 +33,7 @@ void FontMap::DrawString(Game* game, std::string string, const Vec2& position) {
 		char_sprite.y_offset[0] = y + 1;
 		char_sprite.y_offset[1] = y + char_image_height;
 
-		game->DrawImage(char_sprite, position + Vec2{ float(i * char_image_width) * 0.6f, 0.0f });
+		game->DrawSprite(char_sprite, position + Vec2{ float(i * char_image_width) * 0.6f, 0.0f });
 	};
 
 }

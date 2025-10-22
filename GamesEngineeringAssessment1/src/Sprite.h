@@ -8,6 +8,8 @@ public:
 	void Init(int count);
 	void Update(Game* game);
 
+	void Reset();
+
 	GamesEngineeringBase::Image* GetImage() const;
 
 	int image_count{};
@@ -20,6 +22,8 @@ public:
 	int current_frame{};
 	float current_frame_duration{0};
 	float animation_framerate{};
+
+	unsigned char modulation_colour[3]{ 255, 255, 255 }; // Use to alter final colour.
 
 	int x_offset[2]{ 0, -1 };
 	int y_offset[2]{ 0, -1 };

@@ -19,6 +19,11 @@ void Sprite::Update(Game* game) {
 	}
 }
 
+void Sprite::Reset() {
+	current_frame = 0;
+	current_frame_duration = 0;
+}
+
 GamesEngineeringBase::Image* Sprite::GetImage() const {
 	return images[current_frame];
 }

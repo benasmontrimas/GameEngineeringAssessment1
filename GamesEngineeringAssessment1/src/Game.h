@@ -53,12 +53,14 @@ public:
 	void Init();
 	void Run();
 
+	void DrawSprite(const Sprite& image, const Vec2& position);
 	void DrawImage(const Sprite& image, const Vec2& position);
 
 private:
 	void Render();
 	void Update();
 	void LoadAssets();
+	void SpawnEnemy();
 
 public:
 	// Systems
@@ -73,13 +75,20 @@ public:
 	Camera camera{};
 	HUD hud{};
 
-	FontMap font32;
-	FontMap font16;
+	FontMap font32{};
+	FontMap font16{};
 
 	// Other
-	int window_width;
-	int window_height;
-	int* depth_buffer;
-	float delta_time;
+	int window_width{};
+	int window_height{};
+	int* depth_buffer{};
+	float delta_time{};
+	float elapsed_seconds{};
+
+	float level_duration{ 120.0f };
+	float spawn_cooldown{ 10.0f };
+	int last_spawn{};
+	int enemies_alive{};
+
 	bool running = false;
 };

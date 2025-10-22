@@ -48,6 +48,12 @@
     <ClCompile Include="src\Sword.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\FontMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnemyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GamesEngineeringBase.h">
@@ -86,18 +92,18 @@
     <ClInclude Include="src\Sword.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\FontMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EnemyManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\player.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="player.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="resources\player.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="player.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
