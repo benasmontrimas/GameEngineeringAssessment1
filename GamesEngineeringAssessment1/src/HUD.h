@@ -4,6 +4,7 @@
 
 class Game;
 
+// TODO: Need to add player health bar, player kills, fps
 class HUD {
 public:
 	void Init(Game* game);

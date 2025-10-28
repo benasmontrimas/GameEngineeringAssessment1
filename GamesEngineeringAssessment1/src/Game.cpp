@@ -1,6 +1,8 @@
 #include "Game.h"
 #include <cassert>
 
+#include "MainMenuLevel.h"
+
 // Want to add some UI, health, what weapons are equiped. Enemies killed. Time.
 
 void Game::Init() {
@@ -16,7 +18,6 @@ void Game::Init() {
 	// Needs to be after we create window.
 	LoadAssets();
 
-	// Create Depth Array
 	depth_buffer = static_cast<int*>(malloc(sizeof(int) * WINDOW_WIDTH * WINDOW_HEIGHT));
 
 	level_map.Init(this);
@@ -35,6 +36,10 @@ void Game::Init() {
 
 	running = true;
 	timer.reset();
+
+	// TESTING;
+	active_level = new MainMenuLevel;
+	active_level->Init(this);
 }
 
 void Game::Run() {
@@ -123,6 +128,8 @@ void Game::Update() {
 		enemies[enemy_to_remove[i]] = enemies[enemies_alive - 1];
 		enemies_alive--;
 	}
+
+	if (active_level) active_level->Update(this);
 }
 
 void Game::Render() {
@@ -153,8 +160,8 @@ void Game::Render() {
 	hud.Draw(this);
 
 	// Probably want to make a way to draw to screen space not world space.
-	font32.DrawString(this, "I can write normal text now.", camera.position + Vec2{ 50.f - (window_width / 2.0f), 50.0f - (window_height / 2.0f) });
-	font16.DrawString(this, "will convert to caps, and i have some symbols!", camera.position + Vec2{ 50.f - (window_width / 2.0f), 100.0f - (window_height / 2.0f) });
+	font32.DrawString(this, "I can write normal text now.", Vec2{ 10.0f, 10.0f });
+	font16.DrawString(this, "will convert to caps, and i have some symbols!", Vec2{10.0f, 60.0f});
 
 	int seconds = static_cast<int>(elapsed_seconds);
 	const int minutes = seconds / 60;
@@ -170,13 +177,18 @@ void Game::Render() {
 	minutes_string[1] = std::to_string(minutes % 10)[0];
 
 	// I can work out text width very easily (32 * chars * 0.6) as 32 is the width of each char in my map, and 0.6 is the multiplier.
-	font32.DrawString(this, minutes_string + ":" + seconds_string, camera.position + Vec2{ -(96.f / 2.0f), 40.0f - (window_height / 2.0f) });
+	font32.DrawString(this, minutes_string + ":" + seconds_string, Vec2{ 800.0f, 50.0f });
+
+	if (active_level) active_level->Draw(this);
 
 	window.present();
 }
 
 // Need to find better way to do this, this is very prone to error especially once we get to large numbers of resources.
 static const char* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
+	"resources/MainMenuHeader.png",
+	"resources/ButtonBG.png",
+
 	"resources/Player.png",
 	"resources/PlayerWalk2.png",
 	"resources/PlayerWalk3.png",
@@ -249,6 +261,61 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
 
 	for (int y = image_visible_offset_y_start; y < image_visible_offset_y_end; y++) {
 		int image_x = image_x_start + image_x_offset - 1; // Start at - 1 so we can increment at start of loop.
+		if (sprite.flip) image_x = image_x_end;
+		for (int x = image_visible_offset_x_start; x < image_visible_offset_x_end; x++) {
+			if (sprite.flip) image_x--;
+			else image_x++;
+
+			// If alpha 0, skip
+			if (image->alphaAtUnchecked(image_x, image_y) == 0) continue;
+
+			// If something is already drawn closer than this, skip.
+			if (sprite.depth >= depth_buffer[(y * window_width) + x]) continue;
+
+			// Else draw and update depth buffer.
+			const unsigned char* image_colour = image->atUnchecked(image_x, image_y);
+
+			unsigned char final_colour[3] = {
+				(sprite.modulation_colour[0] * image_colour[0]) / 255,
+				(sprite.modulation_colour[1] * image_colour[1]) / 255,
+				(sprite.modulation_colour[2] * image_colour[2]) / 255,
+			};
+
+			window.draw(x, y, &final_colour[0]);
+			depth_buffer[(y * 1200) + x] = sprite.depth;
+		}
+		image_y++;
+	}
+}
+
+void Game::DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position) {
+	const GamesEngineeringBase::Image* image = sprite.GetImage();
+	if (!image) return;
+
+	const Vec2 camera_pos = camera.position;
+
+	// Want to round the position so movement is smoothed between pixels (I dont know if this actually has any effect).
+	int round_x = static_cast<int>(round(position.x));
+	int round_y = static_cast<int>(round(position.y));
+
+	const int image_x_start = sprite.x_offset[0];
+	const int image_x_end = sprite.x_offset[1] == -1 ? static_cast<int>(image->width) : sprite.x_offset[1];
+	const int image_width = image_x_end - image_x_start;
+
+	const int image_y_start = sprite.y_offset[0];
+	const int image_y_end = sprite.y_offset[1] == -1 ? static_cast<int>(image->height) : sprite.y_offset[1];
+	const int image_height = image_y_end - image_y_start;
+
+	// start and end from 0 -> window_width
+	const int image_visible_offset_x_start = max(round_x, 0);
+	const int image_visible_offset_x_end = min(round_x + image_width, window_width);
+
+	const int image_visible_offset_y_start = max(round_y, 0);
+	const int image_visible_offset_y_end = min(round_y + image_height, window_height);
+
+	int image_y = image_y_start;
+	for (int y = image_visible_offset_y_start; y < image_visible_offset_y_end; y++) {
+		int image_x = image_x_start - 1; // Start at - 1 so we can increment at start of loop.
 		if (sprite.flip) image_x = image_x_end;
 		for (int x = image_visible_offset_x_start; x < image_visible_offset_x_end; x++) {
 			if (sprite.flip) image_x--;

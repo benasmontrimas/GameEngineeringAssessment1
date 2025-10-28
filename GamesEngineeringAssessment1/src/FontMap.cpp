@@ -35,7 +35,7 @@ void FontMap::DrawString(Game* game, const std::string& string, const Vec2& posi
 		char_sprite.y_offset[0] = y + 1;
 		char_sprite.y_offset[1] = y + char_image_height;
 
-		game->DrawSprite(char_sprite, position + Vec2{ static_cast<float>(i * char_image_width) * 0.6f, 0.0f });
+		game->DrawSpriteScreenSpace(char_sprite, position + Vec2{ static_cast<float>(i * char_image_width) * 0.6f, 0.0f });
 	};
 
 }

@@ -8,11 +8,15 @@
 #include "HUD.h"
 #include "Sprite.h"
 #include "FontMap.h"
+#include "Level.h"
 
 static constexpr int MAX_ENEMIES = 1000;
 
 // I will want to add animations at some point
 enum GameImages : unsigned char {
+	MainMenuHeader,
+	ButtonBG,
+
 	PlayerBase,
 	PlayerWalk2,
 	PlayerWalk3,
@@ -54,6 +58,7 @@ public:
 	void Run();
 
 	void DrawSprite(const Sprite& sprite, const Vec2& position);
+	void DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position);
 
 private:
 	void Render();
@@ -62,6 +67,8 @@ private:
 	void SpawnEnemy();
 
 public:
+	Level* active_level;
+
 	// Systems
 	GamesEngineeringBase::Window window{};
 	GamesEngineeringBase::Image images[GAME_IMAGE_COUNT];
