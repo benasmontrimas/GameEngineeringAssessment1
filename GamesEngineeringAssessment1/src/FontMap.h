@@ -12,7 +12,7 @@ namespace GamesEngineeringBase {
 class FontMap {
 public:
 	void Init(GamesEngineeringBase::Image* image, int w, int h, int _chars_per_line);
-	void DrawString(Game* game, std::string string, const Vec2& position);
+	void DrawString(Game* game, const std::string& string, const Vec2& position) const;
 
 public:
 	GamesEngineeringBase::Image* image{};

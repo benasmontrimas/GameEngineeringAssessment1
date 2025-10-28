@@ -1,10 +1,10 @@
 #pragma once
 #include "CustomBase.h"
-// Do i need anything but sphere coliders?
+// Do I need anything but sphere colliders?
 
 class Collider {
 public:
-	bool CheckCollision(Collider other);
+	[[nodiscard]] bool CheckCollision(const Collider& other) const;
 
 	Vec2 center;
 	float radius;

@@ -1,11 +1,12 @@
 #pragma once
 
+#include <cassert>
 #include <iostream>
 
 struct Vec2 {
 	float x, y;
 
-	float& operator[](int i) {
+	float& operator[](const int i) {
 		switch (i)
 		{
 		case 0: return x;
@@ -14,33 +15,35 @@ struct Vec2 {
 			std::cout << "Trying to access index which is out of bounds.";
 			break;
 		}
+		assert(true);
 	}
 
-	Vec2 operator+(Vec2 other) const {
-		return Vec2{ x + other.x, y + other.y };
+	Vec2 operator+(const Vec2& other) const {
+		return Vec2{.x = x + other.x, .y = y + other.y };
 	}
 
-	Vec2 operator-(Vec2 other) const {
-		return Vec2{ x - other.x, y - other.y };
+	Vec2 operator-(const Vec2& other) const {
+		return Vec2{.x = x - other.x, .y = y - other.y };
 	}
 
-	Vec2 operator*(float val) const {
-		return Vec2{ x * val, y * val };
+	Vec2 operator*(const float val) const {
+		return Vec2{.x = x * val, .y = y * val };
 	}
 
-	Vec2 operator/(float val) const {
-		return Vec2{ x / val, y / val };
+	Vec2 operator/(const float val) const {
+		return Vec2{.x = x / val, .y = y / val };
 	}
 
-	bool operator!=(Vec2 other) {
+	bool operator!=(const Vec2& other) const
+	{
 		return (x != other.x or y != other.y);
 	}
 
-	float MagSquared() const {
+	[[nodiscard]] float MagSquared() const {
 		return (x * x) + (y * y);
 	}
 
-	float Mag() const {
+	[[nodiscard]] float Mag() const {
 		return sqrt(MagSquared());
 	}
 };
@@ -57,13 +60,13 @@ public:
 	T* data;
 	unsigned int size;
 
-	List(unsigned int size) : size(size) { data = (T*)malloc(sizeof(T) * size); }
+	List(const unsigned int size) : size(size) { data = static_cast<T*>(malloc(sizeof(T) * size)); }
 	List(List<T>& other) = delete;
 	List(List<T>&& other) = delete;
-	~List() { delete[] data; };
+	~List() { delete[] data; }
 
 	// Adds an empty element and returns a ref to it. Does not initialize the value.
-	T& append() {
+	T& Append() {
 		size++;
 		return data[size - 1];
 	}
@@ -74,7 +77,7 @@ public:
 	}
 
 	// Remove an element and keep order of existing elements.
-	void Remove(unsigned int index) {
+	void Remove(const unsigned int index) {
 		for (unsigned int i = index; i < size - 1; i++) {
 			data[i] = data[i + 1];
 		}

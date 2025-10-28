@@ -9,10 +9,10 @@
 #include "Sprite.h"
 #include "FontMap.h"
 
-static const int MAX_ENEMIES = 1000;
+static constexpr int MAX_ENEMIES = 1000;
 
 // I will want to add animations at some point
-enum GameImages {
+enum GameImages : unsigned char {
 	PlayerBase,
 	PlayerWalk2,
 	PlayerWalk3,
@@ -22,7 +22,7 @@ enum GameImages {
 
 	ItemBorder,
 
-	AOEWeapon,
+	Weapon1, // TODO: Name these at some point
 
 	Tile0,
 	Tile1,
@@ -36,8 +36,8 @@ enum GameImages {
 	Tile9,
 	Tile10,
 
-	Font32pt,
-	Font16pt,
+	Font32Pt,
+	Font16Pt,
 
 	GAME_IMAGE_COUNT
 };
@@ -53,8 +53,7 @@ public:
 	void Init();
 	void Run();
 
-	void DrawSprite(const Sprite& image, const Vec2& position);
-	void DrawImage(const Sprite& image, const Vec2& position);
+	void DrawSprite(const Sprite& sprite, const Vec2& position);
 
 private:
 	void Render();
@@ -79,8 +78,8 @@ public:
 	FontMap font16{};
 
 	// Other
-	int window_width{};
-	int window_height{};
+	unsigned int window_width{};
+	unsigned int window_height{};
 	int* depth_buffer{};
 	float delta_time{};
 	float elapsed_seconds{};

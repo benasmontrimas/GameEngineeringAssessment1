@@ -12,12 +12,13 @@ enum EnemyType {
 
 constexpr int ENEMY_HEALTH_BY_TYPE[] = { 100, 50, 200 };
 
+// Just use inheritance.
 class Enemy {
 public:
 	Enemy() = default;
 
 	void Init(Game* game, EnemyType enemy_type);
-	void Update(Game* game);
+	void Update(const Game* game);
 
 	EnemyType type;
 	Sprite sprite;

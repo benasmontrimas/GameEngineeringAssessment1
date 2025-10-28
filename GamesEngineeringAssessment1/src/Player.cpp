@@ -10,7 +10,7 @@ void Player::Init(Game* game) {
 	walking_sprite.images[1] = &game->images[PlayerWalk3];
 	walking_sprite.animation_framerate = 4;
 
-	// Need to make the dying sprite. Dont have any images for it yet.
+	// Need to make the dying sprite. Don't have any images for it yet.
 
 	collider.radius = 32.0f;
 }
@@ -34,7 +34,8 @@ void Player::Update(Game* game) {
 	collider.center = position;
 }
 
-void Player::Draw(Game* game) {
+void Player::Draw(Game* game) const
+{
 	switch (state) {
 	case State::Idle:
 		game->DrawSprite(sprite, position);
@@ -47,8 +48,8 @@ void Player::Draw(Game* game) {
 	}
 }
 
-void Player::HandleInput(Game* game) {
-	GamesEngineeringBase::Window& window = game->window;
+void Player::HandleInput(const Game* game) {
+	const GamesEngineeringBase::Window& window = game->window;
 
 	movement_direction = { 0, 0 };
 	if (window.keyPressed('W') or window.keyPressed(VK_UP)) movement_direction.y -= 1.0f;
@@ -57,7 +58,7 @@ void Player::HandleInput(Game* game) {
 	if (window.keyPressed('D') or window.keyPressed(VK_RIGHT)) movement_direction.x += 1.0f;
 
 	if (movement_direction != Vec2{ 0, 0 }) {
-		Vec2 movement_vector = NormalizeVec2(movement_direction) * movement_speed * game->delta_time;
+		const Vec2 movement_vector = NormalizeVec2(movement_direction) * movement_speed * game->delta_time;
 		position = position + movement_vector;
 		SetState(State::Walking);
 	}
@@ -75,7 +76,7 @@ void Player::HandleInput(Game* game) {
 	}
 }
 
-void Player::SetState(State new_state) {
+void Player::SetState(const State new_state) {
 	if (state == new_state) return;
 
 	state = new_state;

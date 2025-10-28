@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "Game.h"
 
-// Make a 1 minute video.
+// Make a 1-minute video.
 
 int main() {
 	Game game{};

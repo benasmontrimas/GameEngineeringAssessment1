@@ -10,7 +10,7 @@ class Game;
 // TODO: Create a weapon class, add slots for the weapons on the player, and as they equip them,
 // Loop this list and activate them. Simple.
 class Player {
-	enum class State {
+	enum class State : unsigned char {
 		Idle,
 		Walking,
 		Dying,
@@ -21,9 +21,9 @@ public:
 
 	void Init(Game* game);
 	void Update(Game* game);
-	void Draw(Game* game);
+	void Draw(Game* game) const;
 
-	void HandleInput(Game* game);
+	void HandleInput(const Game* game);
 	void SetState(State new_state);
 
 	State state{};

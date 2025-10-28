@@ -10,7 +10,7 @@ class Enemy;
 
 // Player will do the checks for these, if active pressed all active weapons attack,
 // else if player not stunned, check all auto weapons and if off cooldown, attack.
-enum class WeaponType {
+enum class WeaponType : unsigned char {
 	AutoAttack,
 	Active,
 };
@@ -37,7 +37,7 @@ protected:
 	bool is_attacking{};
 
 	int enemies_hit_count{};
-	Enemy* enemies_hit[100]; // Arbitraty sized 100 array, assuming were never hitting more than 100 enemies;
+	Enemy* enemies_hit[100]; // Arbitrary sized 100 array, assuming were never hitting more than 100 enemies;
 
 public:
 	virtual void Attack() = 0;

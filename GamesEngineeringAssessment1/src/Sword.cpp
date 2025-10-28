@@ -14,7 +14,7 @@ Sword::Sword()
 
 	attack_duration = 0.25f;
 
-	// Need to set sprites, dont have any yet;
+	// Need to set sprites, don't have any yet;
 	//attack_animation
 	//sprite
 	//icon
@@ -43,7 +43,7 @@ void Sword::Update(Game* game) {
 		current_attack_time += game->delta_time;
 		if (current_attack_time > attack_duration) {
 			is_attacking = false;
-			enemies_hit_count = 0; // Dont actually need to clear the array.
+			enemies_hit_count = 0; // Don't actually need to clear the array.
 		}
 	}
 }
