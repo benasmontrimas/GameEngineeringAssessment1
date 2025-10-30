@@ -9,7 +9,7 @@ void Sprite::Init(const int count) {
 }
 
 void Sprite::Update(const Game* game) {
-	current_frame_duration += game->delta_time;
+	current_frame_duration += game->game_time;
 	float time_per_frame = 1.0f / animation_framerate;
 
 	if (current_frame_duration >= time_per_frame) {

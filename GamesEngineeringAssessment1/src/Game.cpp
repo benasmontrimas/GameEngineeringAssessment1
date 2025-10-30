@@ -20,166 +20,93 @@ void Game::Init() {
 
 	depth_buffer = static_cast<int*>(malloc(sizeof(int) * WINDOW_WIDTH * WINDOW_HEIGHT));
 
-	level_map.Init(this);
-	player.Init(this);
-	camera.Init();
-	hud.Init(this);
-
 	font32.Init(&images[Font32Pt], 32, 32, 8);
 	font16.Init(&images[Font16Pt], 16, 16, 8);
-
-	camera.SetFollow(&player.position);
-
-	for (int i = 0; i < MAX_ENEMIES; i++) {
-		enemies[i].Init(this, Zombie);
-	}
 
 	running = true;
 	timer.reset();
 
-	// TESTING;
-	active_level = new MainMenuLevel;
-	active_level->Init(this);
+	// Set Main Menu as the starting level.
+	active_level_ = new MainMenuLevel;
+	active_level_->Init(this);
 }
 
 void Game::Run() {
 	std::cout << running << "\n";
 
 	float count = 0.0f;
-	float frame_count = 0;
+	int frame_count = 0;
 
 	while (running) {
 		delta_time = timer.dt();
+		game_time = delta_time * game_time_multiplier;
 
 		count += delta_time;
 		frame_count++;
 		if (count >= 1.0f) {
-			std::cout << "FPS: " << frame_count << "\n";
+			fps = frame_count;
 			count = 0.0f;
 			frame_count = 0;
 		}
 
-		elapsed_seconds += delta_time;
-
 		window.checkInput();
+
+		if (next_level_) SwitchLevel();
 
 		Update();
 		Render();
-
-		if (window.keyPressed(VK_ESCAPE)) running = false;
 	}
-}
-
-void Game::SpawnEnemy() {
-	Vec2 spawn_vector{};
-	const int rand_x = rand() % 2000;
-	const int rand_y = rand() % 2000;
-	spawn_vector.x = static_cast<float>(rand_x - 1000) / 1000.0f;
-	spawn_vector.y = static_cast<float>(rand_y - 1000) / 1000.0f;
-
-	const Vec2 normalized_spawn_vector = NormalizeVec2(spawn_vector);
-	float multiplier = 0.0f;
-	if (abs(window_width / normalized_spawn_vector.x) < abs(window_height / normalized_spawn_vector.y)) {
-		// sides closer
-		multiplier = static_cast<float>(window_width) / normalized_spawn_vector.x;
-	}
-	else {
-		// top/bottom closer
-		multiplier = static_cast<float>(window_height) / normalized_spawn_vector.y;
-	}
-
-	enemies[enemies_alive].position = camera.position + (normalized_spawn_vector * abs(multiplier));
-	enemies_alive++;
 }
 
 void Game::Update() {
 
-	if (last_spawn != static_cast<int>(elapsed_seconds / spawn_cooldown)) {
-		int number_of_enemies_to_spawn = MAX_ENEMIES / static_cast<int>(level_duration / (elapsed_seconds));
-		number_of_enemies_to_spawn = min(number_of_enemies_to_spawn + 10, MAX_ENEMIES - enemies_alive);
+	// if (last_spawn != static_cast<int>(elapsed_seconds / spawn_cooldown)) {
+	// 	int number_of_enemies_to_spawn = MAX_ENEMIES / static_cast<int>(level_duration / (elapsed_seconds));
+	// 	number_of_enemies_to_spawn = min(number_of_enemies_to_spawn + 10, MAX_ENEMIES - enemies_alive);
+	//
+	// 	for (int i = 0; i < number_of_enemies_to_spawn; i++) {
+	// 		SpawnEnemy();
+	// 	}
+	//
+	// 	std::cout << number_of_enemies_to_spawn << "\n";
+	//
+	// 	last_spawn = static_cast<int>(elapsed_seconds / spawn_cooldown);
+	// }
+	//
+	// int enemies_to_remove = 0;
+	// int enemy_to_remove[MAX_ENEMIES];
+	//
+	// for (int i = 0; i < enemies_alive; i++) {
+	// 	// Collision
+	// 	const bool collided_with_player = enemies[i].collider.CheckCollision(player.collider);
+	// 	if (collided_with_player) {
+	// 		enemy_to_remove[enemies_to_remove] = i;
+	// 		enemies_to_remove++;
+	// 	}
+	// 	enemies[i].Update(this);
+	// }
+	//
+	// for (int i = enemies_to_remove - 1; i >= 0; i--) {
+	// 	enemies[enemy_to_remove[i]] = enemies[enemies_alive - 1];
+	// 	enemies_alive--;
+	// }
 
-		for (int i = 0; i < number_of_enemies_to_spawn; i++) {
-			SpawnEnemy();
-		}
-
-		std::cout << number_of_enemies_to_spawn << "\n";
-
-		last_spawn = static_cast<int>(elapsed_seconds / spawn_cooldown);
-	}
-
-	player.Update(this);
-	camera.Update(delta_time);
-	level_map.Update(this);
-
-	int enemies_to_remove = 0;
-	int enemy_to_remove[MAX_ENEMIES];
-
-	for (int i = 0; i < enemies_alive; i++) {
-		// Collision
-		const bool collided_with_player = enemies[i].collider.CheckCollision(player.collider);
-		if (collided_with_player) {
-			enemy_to_remove[enemies_to_remove] = i;
-			enemies_to_remove++;
-		}
-		enemies[i].Update(this);
-	}
-
-	for (int i = enemies_to_remove - 1; i >= 0; i--) {
-		enemies[enemy_to_remove[i]] = enemies[enemies_alive - 1];
-		enemies_alive--;
-	}
-
-	if (active_level) active_level->Update(this);
+	if (active_level_) active_level_->Update(this);
+	camera.Update(game_time);
 }
 
 void Game::Render() {
 	// Once we have a background we should be able to ignore clearing, as all the pixels will
 	// get over drawn anyway.
-	// window.clear();
+	window.clear();
 
 	// Clear Depth
 	const unsigned int buffer_size = window_width * window_height;
-	// memset(depth_buffer, INT_MIN, buffer_size * sizeof(int));
 	for (unsigned int i = 0; i < buffer_size; i++) {
 		depth_buffer[i] = INT_MAX;
 	}
 
-	for (int i = 0; i < level_map.tiles_in_use; i++) {
-		const float x = static_cast<float>(level_map.render_x) + (static_cast<float>(i % level_map.tiles_in_row) * static_cast<float>(level_map.tile_size));
-		const float y = static_cast<float>(level_map.render_y) + (static_cast<float>(i / level_map.tiles_in_row) * static_cast<float>(level_map.tile_size));
-		DrawSprite(level_map.tilemap[i], Vec2{.x = x, .y = y });
-	}
-
-	//DrawSprite(player.sprite, player.position);
-	player.Draw(this);
-
-	for (int i = 0; i < enemies_alive; i++) {
-		DrawSprite(enemies[i].sprite, enemies[i].position);
-	}
-
-	hud.Draw(this);
-
-	// Probably want to make a way to draw to screen space not world space.
-	font32.DrawString(this, "I can write normal text now.", Vec2{ 10.0f, 10.0f });
-	font16.DrawString(this, "will convert to caps, and i have some symbols!", Vec2{10.0f, 60.0f});
-
-	int seconds = static_cast<int>(elapsed_seconds);
-	const int minutes = seconds / 60;
-	seconds = seconds % 60;
-
-	std::string seconds_string = "00";
-	std::string minutes_string = "00";
-
-	seconds_string[0] = std::to_string(seconds / 10)[0];
-	seconds_string[1] = std::to_string(seconds % 10)[0];
-
-	minutes_string[0] = std::to_string(minutes / 10)[0];
-	minutes_string[1] = std::to_string(minutes % 10)[0];
-
-	// I can work out text width very easily (32 * chars * 0.6) as 32 is the width of each char in my map, and 0.6 is the multiplier.
-	font32.DrawString(this, minutes_string + ":" + seconds_string, Vec2{ 800.0f, 50.0f });
-
-	if (active_level) active_level->Draw(this);
+	if (active_level_) active_level_->Draw(this);
 
 	window.present();
 }
@@ -341,4 +268,19 @@ void Game::DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position) {
 		}
 		image_y++;
 	}
+}
+
+void Game::SwitchLevel()
+{
+	delete active_level_;
+	active_level_ = next_level_;
+	next_level_ = nullptr;
+	active_level_->Init(this);
+}
+
+bool Game::SetNextLevel(Level* level)
+{
+	if (next_level_) return false;
+	next_level_ = level;
+	return true;
 }

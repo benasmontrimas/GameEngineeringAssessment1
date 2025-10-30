@@ -32,7 +32,7 @@ public:
 	Sprite walking_sprite{};
 	Sprite dying_sprite{};
 
-	Vec2 position{};
+	Vec2 position{0, 0};
 	Collider collider{};
 
 	// Add weapons, one projectile one aoe. Need to get distance to enemies to attack closest.

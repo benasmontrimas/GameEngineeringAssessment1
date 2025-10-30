@@ -12,6 +12,9 @@ public:
 	void Update(const Game* game);
 	void Draw(Game* game) const;
 
+	// Returns true if the button was pressed this frame.
+	bool IsPressed() const;
+
 public:
 	static constexpr unsigned int width = 200;
 	static constexpr unsigned int height = 50;
@@ -22,5 +25,7 @@ private:
 	Sprite background_;
 	std::string text_;
 
-	bool is_hovered_{false};
+	bool is_hovered_{ false };
+	bool is_pressed_{ false };
+	bool is_pressed_last_frame_{ false };
 };

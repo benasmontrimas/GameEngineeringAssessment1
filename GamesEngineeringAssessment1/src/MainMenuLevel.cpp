@@ -1,5 +1,6 @@
 #include "MainMenuLevel.h"
 #include "Game.h"
+#include "GameLevel.h"
 
 void MainMenuLevel::Init(Game* game) {
 	header_.Init(1);
@@ -19,13 +20,32 @@ void MainMenuLevel::Init(Game* game) {
 }
 
 void MainMenuLevel::Update(Game* game) {
+	// All these actions need to queue (well we can probably quit now), but need to send message to game to tell it this is what it should do after this frame ends.
 	play_button_.Update(game);
+	if (play_button_.IsPressed())
+	{
+		// Play
+		GameLevel* game_level = new GameLevel;
+		if (!game->SetNextLevel(game_level)) delete game_level; // If a level is already queued, we just delete this one, next frame the level should already change.
+	}
+
 	settings_button_.Update(game);
+	if (settings_button_.IsPressed())
+	{
+		// Open Settings
+	}
+
 	quit_button_.Update(game);
+	if (quit_button_.IsPressed())
+	{
+		// Quit
+		game->running = false;
+	}
 }
 
 void MainMenuLevel::Draw(Game* game) {
-	game->DrawSpriteScreenSpace(header_, {.x = 50.0f, .y = 50.0f });
+	int header_x = (game->window_width / 2) - (header_.images[0]->width / 2);
+	game->DrawSpriteScreenSpace(header_, {.x = static_cast<float>(header_x), .y = 50.0f });
 	play_button_.Draw(game);
 	settings_button_.Draw(game);
 	quit_button_.Draw(game);

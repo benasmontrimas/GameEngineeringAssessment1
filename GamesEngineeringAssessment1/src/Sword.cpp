@@ -31,7 +31,7 @@ void Sword::Attack() {
 
 void Sword::Update(Game* game) {
 	if (!is_attacking) {
-		last_attack += game->delta_time;
+		last_attack += game->game_time;
 	}
 	else {
 		// How do we make a round collider, without overcomplicating the collider math...
@@ -40,7 +40,7 @@ void Sword::Update(Game* game) {
 		// check collisions from collider
 		// add all enemies to list of hit enemies, needs to be cleared on finish attack.
 
-		current_attack_time += game->delta_time;
+		current_attack_time += game->game_time;
 		if (current_attack_time > attack_duration) {
 			is_attacking = false;
 			enemies_hit_count = 0; // Don't actually need to clear the array.

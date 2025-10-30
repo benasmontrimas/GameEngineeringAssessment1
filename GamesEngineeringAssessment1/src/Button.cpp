@@ -11,6 +11,9 @@ void Button::Init(Game* game, const std::string& text) {
 
 void Button::Update(const Game* game)
 {
+	is_pressed_last_frame_ = is_pressed_;
+	is_pressed_ = false;
+
 	const GamesEngineeringBase::Window& window = game->window;
 
 	// Probably want to cache these in the game class.
@@ -31,13 +34,17 @@ void Button::Update(const Game* game)
 
 	if (is_hovered_ and window.mouseButtonPressed(GamesEngineeringBase::MouseLeft))
 	{
-		// Need to add callbacks, make this call some function;
-		std::cout << text_ << ", BUTTON CLICKED!\n";
-	} 
+		is_pressed_ = true;
+	}
 }
 
 void Button::Draw(Game* game) const
 {
 	game->DrawSpriteScreenSpace(background_, position);
 	game->font32.DrawString(game, text_, position + Vec2{10.0f, 10.0f});
+}
+
+bool Button::IsPressed() const
+{
+	return is_pressed_ and !is_pressed_last_frame_;
 }

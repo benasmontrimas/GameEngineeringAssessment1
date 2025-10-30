@@ -58,7 +58,7 @@ void Player::HandleInput(const Game* game) {
 	if (window.keyPressed('D') or window.keyPressed(VK_RIGHT)) movement_direction.x += 1.0f;
 
 	if (movement_direction != Vec2{ 0, 0 }) {
-		const Vec2 movement_vector = NormalizeVec2(movement_direction) * movement_speed * game->delta_time;
+		const Vec2 movement_vector = NormalizeVec2(movement_direction) * movement_speed * game->game_time;
 		position = position + movement_vector;
 		SetState(State::Walking);
 	}
@@ -66,11 +66,11 @@ void Player::HandleInput(const Game* game) {
 		SetState(State::Idle);
 	}
 
-	if (movement_direction.x < 0) {
+	if (movement_direction.x * game->game_time < 0) {
 		sprite.flip = true;
 		walking_sprite.flip = true;
 	}
-	else if (movement_direction.x > 0) {
+	else if (movement_direction.x * game->game_time > 0) {
 		sprite.flip = false;
 		walking_sprite.flip = false;
 	}

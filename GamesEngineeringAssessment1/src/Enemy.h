@@ -7,10 +7,10 @@
 class Game;
 
 enum EnemyType {
-	Zombie, Archer, Tank, ENEMY_TYPE_COUNT
+	Zombie, Archer, Tank, Turret, ENEMY_TYPE_COUNT
 };
 
-constexpr int ENEMY_HEALTH_BY_TYPE[] = { 100, 50, 200 };
+static constexpr int ENEMY_HEALTH_BY_TYPE[] = { 100, 50, 200, 100 };
 
 // Just use inheritance.
 class Enemy {

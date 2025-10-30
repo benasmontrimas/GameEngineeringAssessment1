@@ -10,6 +10,7 @@ class TileMap {
 public:
 	void Init(Game* game);
 	void Update(Game* game);
+	void Draw(Game* game);
 
 	static constexpr int map_size = 10000;
 	static constexpr int map_width = 100;

@@ -1,7 +1,5 @@
 #include "Camera.h"
 
-#include <algorithm>
-
 void Camera::Init() {
 	distance_to_move_a_second = starting_speed;
 }
@@ -15,7 +13,7 @@ void Camera::Update(const float dt) {
 	if (followed_position) {
 		const Vec2 vec_to_followed = (*followed_position) - position;
 		const float distance_squared = vec_to_followed.MagSquared();
-
+		if (distance_squared <= 0.001f) return;
 
 		const float distance_to_move = distance_to_move_a_second * dt;
 

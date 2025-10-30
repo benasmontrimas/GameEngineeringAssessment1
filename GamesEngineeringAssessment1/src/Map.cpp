@@ -46,3 +46,12 @@ void TileMap::Update(Game* game) {
 		}
 	}
 }
+
+void TileMap::Draw(Game* game)
+{
+	for (unsigned int i = 0; i < tiles_in_use; i++) {
+		const float x = static_cast<float>(render_x) + (static_cast<float>(i % tiles_in_row) * static_cast<float>(tile_size));
+		const float y = static_cast<float>(render_y) + (static_cast<float>(i / tiles_in_row) * static_cast<float>(tile_size));
+		game->DrawSprite(tilemap[i], Vec2{ .x = x, .y = y });
+	}
+}

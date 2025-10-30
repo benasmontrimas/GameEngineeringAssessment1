@@ -60,26 +60,26 @@ public:
 	void DrawSprite(const Sprite& sprite, const Vec2& position);
 	void DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position);
 
+	bool SetNextLevel(Level* level);
+
 private:
 	void Render();
 	void Update();
 	void LoadAssets();
 	void SpawnEnemy();
+	void SwitchLevel();
+
+private:
+	Level* active_level_;
+	Level* next_level_;
 
 public:
-	Level* active_level;
-
 	// Systems
 	GamesEngineeringBase::Window window{};
 	GamesEngineeringBase::Image images[GAME_IMAGE_COUNT];
 	GamesEngineeringBase::Timer timer{};
 
-	// Entities
-	TileMap level_map{};
-	Player player{};
-	Enemy enemies[MAX_ENEMIES];
 	Camera camera{};
-	HUD hud{};
 
 	FontMap font32{};
 	FontMap font16{};
@@ -88,13 +88,13 @@ public:
 	unsigned int window_width{};
 	unsigned int window_height{};
 	int* depth_buffer{};
-	float delta_time{};
-	float elapsed_seconds{};
 
-	float level_duration{ 120.0f };
-	float spawn_cooldown{ 10.0f };
-	int last_spawn{};
-	int enemies_alive{};
+	// Need to separate out game time and real time for pausing.
+	float delta_time{};
+	float game_time_multiplier = 1.0f;
+	float game_time{};
+
+	int fps{0};
 
 	bool running = false;
 };

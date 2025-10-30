@@ -21,7 +21,8 @@ void Enemy::Update(const Game* game) {
 	case Zombie: // Zombie and tank have the same AI.
 	case Tank:
 		{
-			const Vec2 move_direction = NormalizeVec2(game->player.position - position);
+			// NOTE: THIS IS WRONG, NEED TO SPECIFY THE GOTO POSITION OF ENEMIES, CURRENTLY GO TO CAMERA (WRONG)
+			const Vec2 move_direction = NormalizeVec2(game->camera.position - position);
 			position = position + (move_direction * speed * game->delta_time);
 			
 			if (move_direction.x < 0) sprite.flip = true;
