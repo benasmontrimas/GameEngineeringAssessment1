@@ -3,6 +3,8 @@
 #include "Player.h"
 #include <cassert>
 
+#include "GameLevel.h"
+
 void Enemy::Init(Game* game, const EnemyType enemy_type) {
 	sprite.Init(1);
 
@@ -20,7 +22,7 @@ void Enemy::Update(const Game* game) {
 
 	// AI
 	switch (type) {
-	case Zombie: // All but turret have same ai, walk until your in attack range, and attack, turret just doesnt move.
+	case Zombie: // All but turret have same AI, walk until your in attack range, and attack, turret just doesn't move.
 	case Bomber:
 	case Archer:
 		{
@@ -55,7 +57,13 @@ void Enemy::Draw(Game* game) {
 	game->DrawSprite(sprite, position);
 }
 
-void Enemy::Attack()
+void Enemy::Attack(Game* game)
 {
-	
+	GameLevel* level = dynamic_cast<GameLevel*>(game->GetLevel());
+	Player& player = level->player;
+
+	Vec2 attack_direction = player.position - position;
+	// Need to start timer for attack, i think all enemies actually do something end of attack, so make a charge up then attack.
+	// Ranged enemies just shoot a projectile, create a pool for projectiles, and append to this, then the projectile manages itself
+	// melee enemies can just do a simple range check to see if it hits, play and animation and were all good.
 }

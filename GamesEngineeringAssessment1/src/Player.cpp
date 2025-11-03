@@ -57,6 +57,8 @@ void Player::HandleInput(const Game* game) {
 	if (window.keyPressed('A') or window.keyPressed(VK_LEFT)) movement_direction.x -= 1.0f;
 	if (window.keyPressed('D') or window.keyPressed(VK_RIGHT)) movement_direction.x += 1.0f;
 
+	if (window.keyPressed(VK_SPACE)); // Attack with active weapons.
+
 	if (movement_direction != Vec2{ 0, 0 }) {
 		const Vec2 movement_vector = NormalizeVec2(movement_direction) * movement_speed * game->game_time;
 		position = position + movement_vector;

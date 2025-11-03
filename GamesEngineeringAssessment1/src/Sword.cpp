@@ -23,11 +23,12 @@ Sword::Sword()
 	is_attacking = false;
 }
 
-void Sword::Attack() {
+void Sword::Attack(Game* game) {
 	// Set collider to sword position
 	// Check if it collides, need to keep list of hit enemies so were not hitting multiple times with the same attack.
 	
 	is_attacking = true;
+	GetAttackDirection(game);
 }
 
 void Sword::Update(Game* game) {

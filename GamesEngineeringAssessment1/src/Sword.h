@@ -7,7 +7,7 @@ class Sword : public Weapon {
 public:
 	Sword();
 
-	void Attack() override;
+	void Attack(Game* game) override;
 	void Update(Game* game) override;
 
 	void GetAttackDirection(const Game* game);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GamesEngineeringBase.h"
 #include "CustomBase.h"
 #include "Sprite.h"
 #include "Collider.h"

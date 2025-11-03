@@ -30,7 +30,7 @@ public:
 	void Update(const Game* game);
 	void Draw(Game* game);
 
-	void Attack();
+	void Attack(Game* game);
 
 	Player* player;
 
