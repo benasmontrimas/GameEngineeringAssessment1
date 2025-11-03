@@ -11,6 +11,7 @@ public:
 	void Shutdown(Game* game) override;
 
 private:
+	Sprite bg_;
 	Sprite header_;
 
 	// TODO: Need a button class... This will get messy otherwise.

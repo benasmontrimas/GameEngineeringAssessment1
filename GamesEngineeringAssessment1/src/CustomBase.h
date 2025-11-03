@@ -3,6 +3,8 @@
 #include <cassert>
 #include <iostream>
 
+using uint = unsigned int;
+
 struct Vec2 {
 	float x, y;
 

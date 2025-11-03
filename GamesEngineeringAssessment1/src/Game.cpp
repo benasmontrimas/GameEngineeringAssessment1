@@ -3,7 +3,9 @@
 
 #include "MainMenuLevel.h"
 
-// Want to add some UI, health, what weapons are equiped. Enemies killed. Time.
+// NOTE: UI breaks when user resized the window manually, as this does not update the window width and height,
+// and I don't want to edit the base header, I don't think there's a way to get the actual window width and height
+// to calculate the actual button positions.
 
 void Game::Init() {
 	// Set a random seed at the start of the game.
@@ -25,6 +27,8 @@ void Game::Init() {
 
 	running = true;
 	timer.reset();
+
+	camera.Init();
 
 	// Set Main Menu as the starting level.
 	active_level_ = new MainMenuLevel;
@@ -113,8 +117,10 @@ void Game::Render() {
 
 // Need to find better way to do this, this is very prone to error especially once we get to large numbers of resources.
 static const char* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
+	"resources/MainMenuBG.png",
 	"resources/MainMenuHeader.png",
 	"resources/ButtonBG.png",
+	"resources/PopupMenuBG.png",
 
 	"resources/Player.png",
 	"resources/PlayerWalk2.png",

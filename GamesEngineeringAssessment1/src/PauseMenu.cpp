@@ -6,8 +6,8 @@
 void PauseMenu::Init(Game* game)
 {
 	background_.Init(1);
-	background_.images[0] = &game->images[ButtonBG]; // Need to create a background
-	background_.depth = INT_MAX - 2;
+	background_.images[0] = &game->images[PopupMenuBG]; // Need to create a background
+	background_.depth = INT_MIN + 2;
 
 	const unsigned int button_x = game->window_width / 2 - Button::width / 2;
 	const unsigned int half_y = game->window_height / 2 - Button::height / 2;

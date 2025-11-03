@@ -14,8 +14,10 @@ static constexpr int MAX_ENEMIES = 1000;
 
 // I will want to add animations at some point
 enum GameImages : unsigned char {
+	MainMenuBG,	
 	MainMenuHeader,
 	ButtonBG,
+	PopupMenuBG,
 
 	PlayerBase,
 	PlayerWalk2,
@@ -46,6 +48,7 @@ enum GameImages : unsigned char {
 	GAME_IMAGE_COUNT
 };
 
+// TODO: dsalpdasp
 class Game {
 public:
 	Game() = default;

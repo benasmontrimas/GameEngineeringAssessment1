@@ -5,11 +5,6 @@
 void TileMap::Init(Game* game) {
 	for (int i = 0; i < map_size; i++) {
 		tilemap[i].Init(1);
-
-		constexpr int tile_count = 11;
-		const int rand_offset = rand() % tile_count;
-		tilemap[i].images[0] = &game->images[Tile0 + rand_offset];
-
 		tilemap[i].depth = INT_MAX - 1;
 	}
 }
@@ -41,7 +36,7 @@ void TileMap::Update(Game* game) {
 	int index = 0;
 	for (int y = start_index_y; y < start_index_y + static_cast<int>(tiles_needed_y); y++) {
 		for (int x = start_index_x; x < start_index_x + static_cast<int>(tiles_needed_x); x++) {
-			tilemap[index].images[0] = &game->images[Tile0 + ((static_cast<unsigned int>(y) * 41534421 + (static_cast<unsigned int>(x) + static_cast<unsigned int>(y) * 2001032 ) * 123242113) % 11)];
+			tilemap[index].images[0] = &game->images[Tile0];
 			index++;
 		}
 	}

@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Game.h"
+#include "Player.h"
 #include <cassert>
 
 void Enemy::Init(Game* game, const EnemyType enemy_type) {
@@ -7,6 +8,7 @@ void Enemy::Init(Game* game, const EnemyType enemy_type) {
 
 	type = enemy_type;
 	max_health = ENEMY_HEALTH_BY_TYPE[type];
+	attack_range = ENEMY_ATTACK_RANGE_BY_TYPE[type];
 	current_health = max_health;
 	sprite.images[0] = &game->images[ZombieBase + static_cast<unsigned int>(type)];
 
@@ -18,22 +20,37 @@ void Enemy::Update(const Game* game) {
 
 	// AI
 	switch (type) {
-	case Zombie: // Zombie and tank have the same AI.
-	case Tank:
+	case Zombie: // All but turret have same ai, walk until your in attack range, and attack, turret just doesnt move.
+	case Bomber:
+	case Archer:
 		{
-			// NOTE: THIS IS WRONG, NEED TO SPECIFY THE GOTO POSITION OF ENEMIES, CURRENTLY GO TO CAMERA (WRONG)
-			const Vec2 move_direction = NormalizeVec2(game->camera.position - position);
-			position = position + (move_direction * speed * game->delta_time);
-			
-			if (move_direction.x < 0) sprite.flip = true;
-			else if (move_direction.x > 0) sprite.flip = false;
+			Vec2 to_player_vector = player->position - position;
+
+			float distance_from_player_squared = (to_player_vector).MagSquared();
+
+			if (distance_from_player_squared <= (attack_range * attack_range)) {
+				// Need to attack not move.
+			}
+			else {
+				const Vec2 move_direction = NormalizeVec2(to_player_vector);
+				position = position + (move_direction * speed * game->game_time);
+
+				if (move_direction.x < 0) sprite.flip = true;
+				else if (move_direction.x > 0) sprite.flip = false;
+			}
 		}
 		break;
-	case Archer:
+	case Turret:
+		// No Movement
+
 		break;
 	default:
 		assert("Enemy Type not implemented.");
 	}
 
 	collider.center = position;
+}
+
+void Enemy::Draw(Game* game) {
+	game->DrawSprite(sprite, position);
 }

@@ -12,7 +12,7 @@ public:
 	void Update(Game* game);
 	void Draw(Game* game);
 
-	static constexpr int map_size = 10000;
+		static constexpr int map_size = 10000;
 	static constexpr int map_width = 100;
 	int tile_size = 32;
 

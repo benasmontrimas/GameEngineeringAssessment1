@@ -37,6 +37,15 @@ void GameLevel::Update(Game* game)
 			state_ = Ended;
 		}
 
+		// Just spawns an enemy every seconds based on how many seconds passed.
+		if (run_time_ > last_enemy_spawn_) {
+			for (int i = 0; i < static_cast<int>(run_time_); i++) {
+				SpawnEnemy(game);
+			}
+
+			last_enemy_spawn_ = ceil(run_time_);
+		}
+
 		break;
 	case Paused:
 		game->game_time_multiplier = 0.0f;
@@ -88,7 +97,7 @@ void GameLevel::Draw(Game* game)
 
 	for (unsigned int i = 0; i < enemies_alive_; i++)
 	{
-		enemies_[i].Update(game);
+		enemies_[i].Draw(game);
 	}
 
 	level_map_.Draw(game);
@@ -96,11 +105,12 @@ void GameLevel::Draw(Game* game)
 
 void GameLevel::Shutdown(Game* game)
 {
-	
+
 }
 
-void GameLevel::SpawnEnemy()
+void GameLevel::SpawnEnemy(Game* game)
 {
+	if (enemies_alive_ >= 10000) return;
 
 	Vec2 spawn_vector{};
 	const int rand_x = rand() % 2000;
@@ -120,6 +130,8 @@ void GameLevel::SpawnEnemy()
 	}
 
 	enemies_[enemies_alive_].position = player_.position + (normalized_spawn_vector * abs(multiplier));
+	enemies_[enemies_alive_].Init(game, Zombie);
+	enemies_[enemies_alive_].player = &player_;
 	enemies_alive_++;
 }
 

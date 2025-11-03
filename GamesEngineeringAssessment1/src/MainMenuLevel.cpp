@@ -3,12 +3,16 @@
 #include "GameLevel.h"
 
 void MainMenuLevel::Init(Game* game) {
+	bg_.Init(1);
+	bg_.images[0] = &game->images[MainMenuBG];
+	bg_.depth = INT_MAX - 1;
+
 	header_.Init(1);
 	header_.images[0] = &game->images[MainMenuHeader];
 	header_.depth = INT_MIN;
 
 	const float button_x = static_cast<float>(game->window_width - Button::width) / 2.0f;
-	
+
 	play_button_.Init(game, "Play");
 	play_button_.position = Vec2{.x = button_x, .y = 500.0f};
 
@@ -44,8 +48,11 @@ void MainMenuLevel::Update(Game* game) {
 }
 
 void MainMenuLevel::Draw(Game* game) {
+	game->DrawSpriteScreenSpace(bg_, {0, 0});
+
 	int header_x = (game->window_width / 2) - (header_.images[0]->width / 2);
 	game->DrawSpriteScreenSpace(header_, {.x = static_cast<float>(header_x), .y = 50.0f });
+
 	play_button_.Draw(game);
 	settings_button_.Draw(game);
 	quit_button_.Draw(game);
