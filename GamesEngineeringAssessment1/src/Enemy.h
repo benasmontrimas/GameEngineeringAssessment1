@@ -17,11 +17,12 @@ static constexpr int ENEMY_ATTACK_RANGE_BY_TYPE[] = { 40, 200, 0, 400 };
 
 // Just use inheritance.
 class Enemy {
-	enum State {
+	enum State : unsigned char {
 		Walking,
 		Attacking,
 		Dying,
-	}
+	};
+
 public:
 	Enemy() = default;
 
@@ -29,7 +30,7 @@ public:
 	void Update(const Game* game);
 	void Draw(Game* game);
 
-	virtual void Attack();
+	void Attack();
 
 	Player* player;
 

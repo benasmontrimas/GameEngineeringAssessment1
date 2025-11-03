@@ -4,13 +4,13 @@
 
 void GameLevel::Init(Game* game)
 {
-	player_.Init(game);
+	player.Init(game);
 	level_map_.Init(game);
 	hud_.Init(game);
 	pause_menu_.Init(game);
 
-	game->camera.SetFollow(&player_.position);
-	game->camera.position = player_.position;
+	game->camera.SetFollow(&player.position);
+	game->camera.position = player.position;
 
 	state_ = Active;
 }
@@ -73,11 +73,11 @@ void GameLevel::Update(Game* game)
 	esc_pressed_last_frame_ = esc_pressed_;
 
 	// can still update all this as delta_time should be 0, at least the frame after we pause it should be.
-	player_.Update(game);
+	player.Update(game);
 
-	for (unsigned int i = 0; i < enemies_alive_; i++)
+	for (unsigned int i = 0; i < enemies_alive; i++)
 	{
-		enemies_[i].Update(game);
+		enemies[i].Update(game);
 	}
 
 	level_map_.Update(game);
@@ -93,11 +93,11 @@ void GameLevel::Draw(Game* game)
 	}
 
 	hud_.Draw(game, run_time_);
-	player_.Draw(game);
+	player.Draw(game);
 
-	for (unsigned int i = 0; i < enemies_alive_; i++)
+	for (unsigned int i = 0; i < enemies_alive; i++)
 	{
-		enemies_[i].Draw(game);
+		enemies[i].Draw(game);
 	}
 
 	level_map_.Draw(game);
@@ -110,7 +110,7 @@ void GameLevel::Shutdown(Game* game)
 
 void GameLevel::SpawnEnemy(Game* game)
 {
-	if (enemies_alive_ >= 10000) return;
+	if (enemies_alive >= 10000) return;
 
 	Vec2 spawn_vector{};
 	const int rand_x = rand() % 2000;
@@ -129,9 +129,9 @@ void GameLevel::SpawnEnemy(Game* game)
 		multiplier = static_cast<float>(800) / normalized_spawn_vector.y;
 	}
 
-	enemies_[enemies_alive_].position = player_.position + (normalized_spawn_vector * abs(multiplier));
-	enemies_[enemies_alive_].Init(game, Zombie);
-	enemies_[enemies_alive_].player = &player_;
-	enemies_alive_++;
+	enemies[enemies_alive].position = player.position + (normalized_spawn_vector * abs(multiplier));
+	enemies[enemies_alive].Init(game, Zombie);
+	enemies[enemies_alive].player = &player;
+	enemies_alive++;
 }
 

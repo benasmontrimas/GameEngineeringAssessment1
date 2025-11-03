@@ -116,7 +116,7 @@ void Game::Render() {
 }
 
 // Need to find better way to do this, this is very prone to error especially once we get to large numbers of resources.
-static const char* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
+static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
 	"resources/MainMenuBG.png",
 	"resources/MainMenuHeader.png",
 	"resources/ButtonBG.png",
@@ -209,9 +209,9 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
 			const unsigned char* image_colour = image->atUnchecked(image_x, image_y);
 
 			unsigned char final_colour[3] = {
-				(sprite.modulation_colour[0] * image_colour[0]) / 255,
-				(sprite.modulation_colour[1] * image_colour[1]) / 255,
-				(sprite.modulation_colour[2] * image_colour[2]) / 255,
+				static_cast<unsigned char>((sprite.modulation_colour[0] * image_colour[0]) / 255),
+				static_cast<unsigned char>((sprite.modulation_colour[1] * image_colour[1]) / 255),
+				static_cast<unsigned char>((sprite.modulation_colour[2] * image_colour[2]) / 255),
 			};
 
 			window.draw(x, y, &final_colour[0]);
@@ -221,13 +221,29 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
 	}
 }
 
+void Game::DrawSprite(const Sprite& sprite, const Vec2& position, const float rotation, const Vec2& around)
+{
+	Vec2 rotation_matrix[2] = {
+		{
+			cos(rotation), -sin(rotation)
+		},
+		{
+			sin(rotation), cos(rotation)
+		}
+	};
+
+	Vec2 pixel_position = position - around;
+	// Vec2 rotated_position = dot(rotation_matrix, pixel_position)
+	// draw(around + rotated_position)
+}
+
 void Game::DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position) {
 	const GamesEngineeringBase::Image* image = sprite.GetImage();
 	if (!image) return;
 
 	const Vec2 camera_pos = camera.position;
 
-	// Want to round the position so movement is smoothed between pixels (I dont know if this actually has any effect).
+	// Want to round the position so movement is smoothed between pixels (I don't know if this actually has any effect).
 	int round_x = static_cast<int>(round(position.x));
 	int round_y = static_cast<int>(round(position.y));
 
@@ -264,9 +280,9 @@ void Game::DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position) {
 			const unsigned char* image_colour = image->atUnchecked(image_x, image_y);
 
 			unsigned char final_colour[3] = {
-				(sprite.modulation_colour[0] * image_colour[0]) / 255,
-				(sprite.modulation_colour[1] * image_colour[1]) / 255,
-				(sprite.modulation_colour[2] * image_colour[2]) / 255,
+				static_cast<unsigned char>((sprite.modulation_colour[0] * image_colour[0]) / 255),
+				static_cast<unsigned char>((sprite.modulation_colour[1] * image_colour[1]) / 255),
+				static_cast<unsigned char>((sprite.modulation_colour[2] * image_colour[2]) / 255),
 			};
 
 			window.draw(x, y, &final_colour[0]);
@@ -289,4 +305,9 @@ bool Game::SetNextLevel(Level* level)
 	if (next_level_) return false;
 	next_level_ = level;
 	return true;
+}
+
+Level* Game::GetLevel() const
+{
+	return active_level_;
 }

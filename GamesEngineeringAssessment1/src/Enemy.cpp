@@ -54,3 +54,8 @@ void Enemy::Update(const Game* game) {
 void Enemy::Draw(Game* game) {
 	game->DrawSprite(sprite, position);
 }
+
+void Enemy::Attack()
+{
+	
+}
