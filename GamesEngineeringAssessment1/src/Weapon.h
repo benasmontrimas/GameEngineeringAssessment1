@@ -40,6 +40,6 @@ protected:
 	Enemy* enemies_hit[100]; // Arbitrary sized 100 array, assuming were never hitting more than 100 enemies;
 
 public:
-	virtual void Attack() = 0;
+	virtual void Attack(Game* game) = 0;
 	virtual void Update(Game* game) = 0;
 };

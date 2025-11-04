@@ -3,6 +3,8 @@
 #include "Player.h"
 #include <cassert>
 
+#include "GameLevel.h"
+
 void Enemy::Init(Game* game, const EnemyType enemy_type) {
 	sprite.Init(1);
 	sprite.images[0] = &game->images[ZombieBase + static_cast<unsigned int>(type)];
@@ -74,6 +76,11 @@ void Enemy::Walk(const Game* game) {
 
 void Enemy::Attack(const Game* game) {
 	if (current_attack_time >= attack_duration) {
+		GameLevel* level = dynamic_cast<GameLevel*>(game->GetLevel());
+		Player& player = level->player;
+
+		Vec2 attack_direction = player.position - position;
+
 		// Probably want to actually do the attack, ie shoot projectile, or check damage collisions.
 		switch (type) {
 		case Zombie:

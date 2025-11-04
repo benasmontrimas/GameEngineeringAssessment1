@@ -30,17 +30,17 @@ private:
 
 public:
 	static constexpr float time_limit = 120.0f;
+	Player player;
+	Enemy enemies[10000];
+	unsigned int enemies_alive{ 0 };
 
 private:
-	Player player_;
 	// ReSharper disable once CppUninitializedNonStaticDataMember
-	Enemy enemies_[10000];
 	TileMap level_map_{};
 	HUD hud_{};
 	PauseMenu pause_menu_;
 
 	float run_time_{};
-	unsigned int enemies_alive_{ 0 };
 	State state_{ Active };
 
 	float last_enemy_spawn_{0};

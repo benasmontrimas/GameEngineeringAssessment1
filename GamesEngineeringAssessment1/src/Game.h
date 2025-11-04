@@ -1,11 +1,7 @@
 #pragma once
 
 #include "GamesEngineeringBase.h"
-#include "Player.h"
 #include "Camera.h"
-#include "Enemy.h"
-#include "Map.h"
-#include "HUD.h"
 #include "Sprite.h"
 #include "FontMap.h"
 #include "Level.h"
@@ -61,9 +57,12 @@ public:
 	void Run();
 
 	void DrawSprite(const Sprite& sprite, const Vec2& position);
+	void DrawSprite(const Sprite& sprite, const Vec2& position, float rotation, const Vec2& around);
 	void DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position);
 
 	bool SetNextLevel(Level* level);
+
+	Level* GetLevel() const;
 
 private:
 	void Render();
