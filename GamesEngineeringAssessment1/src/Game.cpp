@@ -63,38 +63,6 @@ void Game::Run() {
 }
 
 void Game::Update() {
-
-	// if (last_spawn != static_cast<int>(elapsed_seconds / spawn_cooldown)) {
-	// 	int number_of_enemies_to_spawn = MAX_ENEMIES / static_cast<int>(level_duration / (elapsed_seconds));
-	// 	number_of_enemies_to_spawn = min(number_of_enemies_to_spawn + 10, MAX_ENEMIES - enemies_alive);
-	//
-	// 	for (int i = 0; i < number_of_enemies_to_spawn; i++) {
-	// 		SpawnEnemy();
-	// 	}
-	//
-	// 	std::cout << number_of_enemies_to_spawn << "\n";
-	//
-	// 	last_spawn = static_cast<int>(elapsed_seconds / spawn_cooldown);
-	// }
-	//
-	// int enemies_to_remove = 0;
-	// int enemy_to_remove[MAX_ENEMIES];
-	//
-	// for (int i = 0; i < enemies_alive; i++) {
-	// 	// Collision
-	// 	const bool collided_with_player = enemies[i].collider.CheckCollision(player.collider);
-	// 	if (collided_with_player) {
-	// 		enemy_to_remove[enemies_to_remove] = i;
-	// 		enemies_to_remove++;
-	// 	}
-	// 	enemies[i].Update(this);
-	// }
-	//
-	// for (int i = enemies_to_remove - 1; i >= 0; i--) {
-	// 	enemies[enemy_to_remove[i]] = enemies[enemies_alive - 1];
-	// 	enemies_alive--;
-	// }
-
 	if (active_level_) active_level_->Update(this);
 	camera.Update(game_time);
 }
@@ -122,16 +90,91 @@ static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
 	"resources/ButtonBG.png",
 	"resources/PopupMenuBG.png",
 
-	"resources/Player.png",
+	"resources/PlayerIdle1.png",
+	"resources/PlayerIdle2.png",
+	"resources/PlayerIdle3.png",
+	"resources/PlayerIdle4.png",
+	"resources/PlayerIdle5.png",
+	"resources/PlayerIdle6.png",
+	"resources/PlayerIdle7.png",
+
+	"resources/PlayerWalk1.png",
 	"resources/PlayerWalk2.png",
 	"resources/PlayerWalk3.png",
-	"resources/Zombie.png",
-	"resources/Archer.png",
+	"resources/PlayerWalk4.png",
+	"resources/PlayerWalk5.png",
+	"resources/PlayerWalk6.png",
+	"resources/PlayerWalk7.png",
+	"resources/PlayerWalk8.png",
+	"resources/PlayerWalk9.png",
+
+	"resources/Player.png",
+
+	"resources/SwordsmanWalk1.png",
+	"resources/SwordsmanWalk2.png",
+	"resources/SwordsmanWalk3.png",
+	"resources/SwordsmanWalk4.png",
+	"resources/SwordsmanWalk5.png",
+	"resources/SwordsmanWalk6.png",
+	"resources/SwordsmanWalk7.png",
+	"resources/SwordsmanWalk8.png",
+	"resources/SwordsmanWalk9.png",
+	"resources/SwordsmanWalk10.png",
+
+	"resources/SwordsmanAttack1.png",
+	"resources/SwordsmanAttack2.png",
+	"resources/SwordsmanAttack3.png",
+	"resources/SwordsmanAttack4.png",
+	"resources/SwordsmanAttack5.png",
+	"resources/SwordsmanAttack6.png",
+	"resources/SwordsmanAttack7.png",
+	"resources/SwordsmanAttack8.png",
+	"resources/SwordsmanAttack9.png",
+	"resources/SwordsmanAttack10.png",
+	"resources/SwordsmanAttack11.png",
+	"resources/SwordsmanAttack12.png",
+	"resources/SwordsmanAttack13.png",
+	"resources/SwordsmanAttack14.png",
+	"resources/SwordsmanAttack15.png",
+
+	"resources/ArcherWalk1.png",
+	"resources/ArcherWalk2.png",
+	"resources/ArcherWalk3.png",
+	"resources/ArcherWalk4.png",
+	"resources/ArcherWalk5.png",
+	"resources/ArcherWalk6.png",
+	"resources/ArcherWalk7.png",
+	"resources/ArcherWalk8.png",
+	"resources/ArcherWalk9.png",
+	"resources/ArcherWalk10.png",
+
 	"resources/Tank.png",
 
 	"resources/ItemBorder.png",
 
 	"resources/AOEWeapon.png",
+
+	"resources/SwordThrow1.png",
+	"resources/SwordThrow2.png",
+	"resources/SwordThrow3.png",
+	"resources/SwordThrow4.png",
+	"resources/SwordThrow5.png",
+	"resources/SwordThrow6.png",
+	"resources/SwordThrow7.png",
+	"resources/SwordThrow8.png",
+
+	"resources/Water1.png",
+	"resources/Water2.png",
+	"resources/Water3.png",
+	"resources/Water4.png",
+	"resources/Water5.png",
+	"resources/Water6.png",
+	"resources/Water7.png",
+	"resources/Water8.png",
+
+	"resources/Grass1.png",
+
+	"resources/Path1.png",
 
 	"resources/0.png",
 	"resources/1.png",
@@ -152,7 +195,7 @@ static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
 void Game::LoadAssets() {
 	// TODO: CHECK IF ASSET EXISTS -> IF NOT JUST LOAD A BASE ONE WHICH IS CLEAR THAT IT'S NOT LOADED.
 	for (int i = 0; i < GAME_IMAGE_COUNT; i++) {
-		images[i].load(GAME_IMAGE_PATH[i]);
+		if (!images[i].load(GAME_IMAGE_PATH[i])) std::cout << "ERROR LOADING FILE\n";
 	}
 }
 

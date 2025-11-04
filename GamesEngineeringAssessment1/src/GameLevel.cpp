@@ -4,7 +4,7 @@
 void GameLevel::Init(Game* game)
 {
 	player.Init(game);
-	level_map_.Init(game);
+	level_map_.Init(game, "resources/LevelLayouts/Layout1.txt");
 	hud_.Init(game);
 	pause_menu_.Init(game);
 
@@ -74,9 +74,15 @@ void GameLevel::Update(Game* game)
 	// can still update all this as delta_time should be 0, at least the frame after we pause it should be.
 	player.Update(game);
 
-	for (unsigned int i = 0; i < enemies_alive; i++)
+	// Backwards for removal
+	for (int i = int(enemies_alive) - 1; i >= 0; i--)
 	{
 		enemies[i].Update(game);
+		// swap and pop
+		if (enemies[i].state == Enemy::Dead) {
+			enemies[i] = enemies[enemies_alive - 1];
+			enemies_alive--;
+		}
 	}
 
 	level_map_.Update(game);

@@ -25,21 +25,13 @@ protected:
 
 	float cooldown{};
 	float last_attack{};
+
 	float damage{};
 
-	float attack_duration{};
-	float current_attack_time{};
-
-	Sprite attack_animation{};
-	Sprite sprite{};
 	Sprite icon{};
-
-	bool is_attacking{};
-
-	int enemies_hit_count{};
-	Enemy* enemies_hit[100]; // Arbitrary sized 100 array, assuming were never hitting more than 100 enemies;
-
 public:
+	virtual void Init(Game* game) = 0;
 	virtual void Attack(Game* game) = 0;
 	virtual void Update(Game* game) = 0;
+	virtual void Draw(Game* game) = 0;
 };

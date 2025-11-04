@@ -3,52 +3,84 @@
 #include "Enemy.h"
 #include "GameLevel.h"
 
-Sword::Sword()
-{
+void Sword::Init(Game* game) {
 	type = WeaponType::AutoAttack;
 
 	name = "Sword";
 	description = "A fast swinging auto attack.";
 
 	cooldown = 1.0f;
-	damage = 10.0f;
+	damage = 100.0f;
 
-	attack_duration = 0.25f;
+	// Each projectiles gets a copy of this, dont need to worry about keeping a ref to it.
+	Sprite projectile_sprite;
+	projectile_sprite.Init(8);
+	for (int animation_index = 0; animation_index < 8; animation_index++) {
+		projectile_sprite.images[animation_index] = &game->images[SwordThrow1 + animation_index];
+	}
+
+	for (int i = 0; i < 100; i++) {
+		projectiles[i].Init(game, projectile_sprite);
+	}
 
 	// Need to set sprites, don't have any yet;
 	//attack_animation
 	//sprite
 	//icon
-
-	is_attacking = false;
 }
 
 void Sword::Attack(Game* game) {
-	// Set collider to sword position
-	// Check if it collides, need to keep list of hit enemies so were not hitting multiple times with the same attack.
-	
-	is_attacking = true;
+	if (projectile_count >= 100) return;
+	// Make it just spawn a sword projectile.
+	// No attack duration.
+	GameLevel* level = (GameLevel*)game->GetLevel();
+	Player& player = level->player;
+
 	GetAttackDirection(game);
+	projectiles[projectile_count].Shoot(game, player.position, attack_direction_, 100, 3.0f);
+	projectile_count++;
 }
 
 void Sword::Update(Game* game) {
-	if (!is_attacking) {
-		last_attack += game->game_time;
+	last_attack += game->game_time;
+	if (last_attack >= cooldown) {
+		Attack(game);
+		last_attack -= cooldown;
 	}
-	else {
-		// How do we make a round collider, without overcomplicating the collider math...
-		// we can do some round colliders and take slices from them. might be best bet.
-		// Update sword swing arc
-		// check collisions from collider
-		// add all enemies to list of hit enemies, needs to be cleared on finish attack.
 
-		current_attack_time += game->game_time;
-		float attack_progress = current_attack_time / attack_duration;
 
-		if (current_attack_time > attack_duration) {
-			is_attacking = false;
-			enemies_hit_count = 0; // Don't actually need to clear the array.
+	GameLevel* level = (GameLevel*)game->GetLevel();
+	Enemy* enemies = level->enemies;
+	int enemies_alive = level->enemies_alive;
+
+	// We go backwards so that we can remove projectiles if they collide.
+	for (int i = projectile_count - 1; i >= 0; i--) {
+		projectiles[i].Update(game);
+
+		if (projectiles[i].is_dead) {
+			projectiles[i] = projectiles[projectile_count - 1];
+			projectile_count--;
+			continue;
 		}
+
+		// Do collisions here so we only check the ones we need... If we do in projectile class, we dont know
+		// What we want to collide with and dont want to check all enemies if we only want projectiles to collide with player.
+
+		for (int enemy_i = 0; enemy_i < enemies_alive; enemy_i++) {
+			if (projectiles[i].collider.CheckCollision(enemies[enemy_i].collider)) {
+				enemies[enemy_i].Hit(damage);
+
+				projectiles[i] = projectiles[projectile_count - 1];
+				projectile_count--;
+				break;
+			}
+		}
+	}
+}
+
+void Sword::Draw(Game* game) {
+	for (int i = 0; i < projectile_count; i++) {
+		projectiles[i].Draw(game);
 	}
 }
 
@@ -73,5 +105,5 @@ void Sword::GetAttackDirection(const Game* game)
 		closest_distance_squared = distance_squared;
 	}
 
-	attack_direction_ = enemies[closest_enemy_index].position - player.position;
+	attack_direction_ = NormalizeVec2(enemies[closest_enemy_index].position - player.position);
 }

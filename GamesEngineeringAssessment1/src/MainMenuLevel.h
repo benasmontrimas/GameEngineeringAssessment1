@@ -2,6 +2,7 @@
 #include "Button.h"
 #include "Level.h"
 #include "Sprite.h"
+#include "Map.h"
 
 class MainMenuLevel : public Level {
 public:
@@ -11,7 +12,7 @@ public:
 	void Shutdown(Game* game) override;
 
 private:
-	Sprite bg_;
+	TileMap bg_;
 	Sprite header_;
 
 	// TODO: Need a button class... This will get messy otherwise.

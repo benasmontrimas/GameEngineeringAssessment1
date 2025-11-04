@@ -1,11 +1,82 @@
 #include "Map.h"
 #include "Game.h"
 #include <cassert>
+#include <fstream>
 
-void TileMap::Init(Game* game) {
-	for (int i = 0; i < map_size; i++) {
-		tilemap[i].Init(1);
-		tilemap[i].depth = INT_MAX - 1;
+void TileMap::Init(Game* game, std::string level_path) {
+	GameImages image_offset[TILE_TYPE_COUNT] = {
+		Water1,
+		Grass1,
+		Path1,
+	};
+
+	int frame_count[TILE_TYPE_COUNT] = {
+		8,
+		1,
+		1,
+	};
+
+	for (int type = Water; type < TILE_TYPE_COUNT; type++) {
+		tiles[type].Init(8);
+		for (int i = 0; i < frame_count[type]; i++) {
+			tiles[type].images[i] = &game->images[image_offset[type] + i];
+		}
+		tiles[type].animation_framerate = 8;
+		tiles[type].depth = INT_MAX - 1;
+	}
+
+	// Read file
+	// Set tilemap to read files, then when we draw we just need to get the modulus of the index and use the tile
+	// From tilemap. well for infinite atleast, for fixed size, we just need to set camera boundry.
+
+	// If no file is passed we just create a water only map. (Used for main menu).
+	if (level_path == "") {
+		tilemap_width = 1;
+		tilemap_height = 1;
+		tilemap = new Sprite*[1];
+		tilemap[0] = &tiles[0];
+		return;
+	}
+
+	std::fstream file{level_path, file.in};
+	if (!file.is_open()) {
+		std::cout << "ERROR: failed reading level file - " << level_path << "\n";
+		return;
+	}
+
+	std::string line;
+
+	std::getline(file, line);
+
+	if (line[0] == 'S') {
+		// Static Map
+	} else if (line[0] == 'I') {
+		// Infinite Map
+	}
+
+	std::getline(file, line);
+	tilemap_width = std::stoi(line);
+
+	std::getline(file, line);
+	tilemap_height = std::stoi(line);
+
+	tilemap = new Sprite*[tilemap_width * tilemap_height];
+
+	for (int y = 0; y < tilemap_height; y++) {
+		std::getline(file, line);
+		for (int x = 0; x < tilemap_width; x++) {
+			switch (line[x]) {
+			case 'W':
+				tilemap[x + (y * tilemap_width)] = &tiles[Water];
+				break;
+			case 'P':
+				tilemap[x + (y * tilemap_width)] = &tiles[Path];
+				break;
+			case 'G':
+				tilemap[x + (y * tilemap_width)] = &tiles[Grass];
+				break;
+			}
+		}
 	}
 }
 
@@ -13,6 +84,13 @@ void TileMap::Update(Game* game) {
 	// Need to get all tiles visible to camera and load them, and unload all others.
 	// Only ever need (window_width / tile_size) + 1 tiles. (well I thought, still have gaps, so did +2).
 
+	for (int i = 0; i < 1; i++) {
+		tiles[i].Update(game);
+	}
+}
+
+void TileMap::Draw(Game* game)
+{
 	const Vec2 camera_position = game->camera.position;
 	const int screen_x = static_cast<int>(camera_position.x) - static_cast<int>(game->window_width / 2);
 	const int screen_y = static_cast<int>(camera_position.y) - static_cast<int>(game->window_height / 2);
@@ -33,20 +111,22 @@ void TileMap::Update(Game* game) {
 	render_x = start_index_x * 32;
 	render_y = start_index_y * 32;
 
-	int index = 0;
-	for (int y = start_index_y; y < start_index_y + static_cast<int>(tiles_needed_y); y++) {
-		for (int x = start_index_x; x < start_index_x + static_cast<int>(tiles_needed_x); x++) {
-			tilemap[index].images[0] = &game->images[Tile0];
-			index++;
-		}
-	}
-}
+	while (start_index_x < 0) start_index_x += tilemap_width;
+	int tilemap_index_x = start_index_x % tilemap_width;
 
-void TileMap::Draw(Game* game)
-{
-	for (unsigned int i = 0; i < tiles_in_use; i++) {
-		const float x = static_cast<float>(render_x) + (static_cast<float>(i % tiles_in_row) * static_cast<float>(tile_size));
-		const float y = static_cast<float>(render_y) + (static_cast<float>(i / tiles_in_row) * static_cast<float>(tile_size));
-		game->DrawSprite(tilemap[i], Vec2{ .x = x, .y = y });
+	while (start_index_y < 0) start_index_y += tilemap_height;
+	int tilemap_index_y = start_index_y % tilemap_height;
+
+	for (unsigned int y = 0; y < tiles_needed_y; y++) {
+		for (unsigned int x = 0; x < tiles_needed_x; x++) {
+			const float x_pos = static_cast<float>(render_x) + (static_cast<float>(x) * static_cast<float>(tile_size));
+			const float y_pos = static_cast<float>(render_y) + (static_cast<float>(y) * static_cast<float>(tile_size));
+
+			int final_x = (start_index_x + x) % tilemap_width;
+			int final_y = (start_index_y + y) % tilemap_height;
+			Sprite* sprite_to_draw = tilemap[final_x + (final_y * tilemap_width)];
+
+			game->DrawSprite(*sprite_to_draw, Vec2{x_pos, y_pos});
+		}
 	}
 }

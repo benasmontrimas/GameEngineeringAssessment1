@@ -5,6 +5,7 @@
 #include "Collider.h"
 
 class Game;
+class Weapon;
 
 // TODO: Create a weapon class, add slots for the weapons on the player, and as they equip them,
 // Loop this list and activate them. Simple.
@@ -38,4 +39,6 @@ public:
 
 	float movement_speed{ 150 };
 	Vec2 movement_direction{};
+
+	Weapon* weapons[2] {nullptr, nullptr};
 };

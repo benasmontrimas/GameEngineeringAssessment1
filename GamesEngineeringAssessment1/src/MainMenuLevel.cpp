@@ -3,9 +3,10 @@
 #include "GameLevel.h"
 
 void MainMenuLevel::Init(Game* game) {
-	bg_.Init(1);
-	bg_.images[0] = &game->images[MainMenuBG];
-	bg_.depth = INT_MAX - 1;
+	bg_.Init(game, "");
+
+	game->camera.SetFollow(nullptr);
+	game->camera.position = Vec2{0, 0};
 
 	header_.Init(1);
 	header_.images[0] = &game->images[MainMenuHeader];
@@ -24,6 +25,8 @@ void MainMenuLevel::Init(Game* game) {
 }
 
 void MainMenuLevel::Update(Game* game) {
+	bg_.Update(game);
+
 	// All these actions need to queue (well we can probably quit now), but need to send message to game to tell it this is what it should do after this frame ends.
 	play_button_.Update(game);
 	if (play_button_.IsPressed())
@@ -48,7 +51,7 @@ void MainMenuLevel::Update(Game* game) {
 }
 
 void MainMenuLevel::Draw(Game* game) {
-	game->DrawSpriteScreenSpace(bg_, {0, 0});
+	bg_.Draw(game);
 
 	int header_x = (game->window_width / 2) - (header_.images[0]->width / 2);
 	game->DrawSpriteScreenSpace(header_, {.x = static_cast<float>(header_x), .y = 50.0f });

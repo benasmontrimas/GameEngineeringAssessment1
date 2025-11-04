@@ -1,14 +1,19 @@
 #include "Player.h"
+#include "Sword.h"
 #include "Game.h"
 
 void Player::Init(Game* game) {
-	sprite.Init(1);
-	sprite.images[0] = &game->images[PlayerWalk2];
+	sprite.Init(7);
+	for (int i = 0; i < 7; i++) {
+		sprite.images[i] = &game->images[PlayerIdle1 + i];
+	}
+	sprite.animation_framerate = 10;
 
-	walking_sprite.Init(2);
-	walking_sprite.images[0] = &game->images[PlayerWalk2];
-	walking_sprite.images[1] = &game->images[PlayerWalk3];
-	walking_sprite.animation_framerate = 4;
+	walking_sprite.Init(9);
+	for (int i = 0; i < 9; i++) {
+		walking_sprite.images[i] = &game->images[PlayerWalk1 + i];
+	}
+	walking_sprite.animation_framerate = 10;
 
 	dying_sprite.Init(1);
 	dying_sprite.images[0] = &game->images[PlayerWalk2];
@@ -16,9 +21,18 @@ void Player::Init(Game* game) {
 	// Need to make the dying sprite. Don't have any images for it yet.
 
 	collider.radius = 32.0f;
+
+	 weapons[0] = new Sword;
+	 weapons[0]->Init(game);
 }
 
 void Player::Update(Game* game) {
+	if (state != State::Dying) { // already have a switch but i dont want repeat this loop.
+		for (int i = 0; i < 2; i++) {
+			if (weapons[i]) weapons[i]->Update(game);
+		}
+	}
+
 	switch (state) {
 	case State::Idle:
 		sprite.Update(game);
@@ -39,6 +53,12 @@ void Player::Update(Game* game) {
 
 void Player::Draw(Game* game) const
 {
+	if (state != State::Dying) { // already have a switch but i dont want repeat this loop.
+		for (int i = 0; i < 2; i++) {
+			if (weapons[i]) weapons[i]->Draw(game);
+		}
+	}
+
 	switch (state) {
 	case State::Idle:
 		game->DrawSprite(sprite, position);
@@ -59,8 +79,6 @@ void Player::HandleInput(const Game* game) {
 	if (window.keyPressed('S') or window.keyPressed(VK_DOWN)) movement_direction.y += 1.0f;
 	if (window.keyPressed('A') or window.keyPressed(VK_LEFT)) movement_direction.x -= 1.0f;
 	if (window.keyPressed('D') or window.keyPressed(VK_RIGHT)) movement_direction.x += 1.0f;
-
-	if (window.keyPressed(VK_SPACE)); // Attack with active weapons.
 
 	if (movement_direction != Vec2{ 0, 0 }) {
 		const Vec2 movement_vector = NormalizeVec2(movement_direction) * movement_speed * game->game_time;

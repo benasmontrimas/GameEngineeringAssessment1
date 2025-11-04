@@ -5,7 +5,7 @@
 // and means we don't need to pass the Game to all the objects with a sprite.
 void Sprite::Init(const int count) {
 	image_count = count;
-	images = static_cast<GamesEngineeringBase::Image**>(malloc(sizeof(GamesEngineeringBase::Image*)));
+	images = static_cast<GamesEngineeringBase::Image**>(malloc(sizeof(GamesEngineeringBase::Image*) * image_count));
 }
 
 void Sprite::Update(const Game* game) {

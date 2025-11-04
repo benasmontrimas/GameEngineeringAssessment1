@@ -6,14 +6,21 @@
 #include "GameLevel.h"
 
 void Enemy::Init(Game* game, const EnemyType enemy_type) {
-	sprite.Init(1);
-	sprite.images[0] = &game->images[ZombieBase + static_cast<unsigned int>(type)];
+	sprite.Init(10);
+	for (int i = 0; i < 10; i++) {
+		sprite.images[i] = &game->images[SwordsmanWalk1 + i];
+	}
+	sprite.animation_framerate = 15;
 
-	attacking_sprite.Init(1);
-	attacking_sprite.images[0] = &game->images[ZombieBase];
+	attacking_sprite.Init(15);
+	for (int i = 0; i < 15; i++) {
+		attacking_sprite.images[i] = &game->images[SwordsmanAttack1 + i];
+	}
+	attacking_sprite.animation_framerate = 30; // Attack takes 0.5 seconds.
+	attack_duration = 0.5f;
 
 	dying_sprite.Init(1);
-	dying_sprite.images[0] = &game->images[ZombieBase];
+	dying_sprite.images[0] = &game->images[SwordsmanWalk1];
 
 	type = enemy_type;
 	max_health = ENEMY_HEALTH_BY_TYPE[type];
@@ -21,6 +28,8 @@ void Enemy::Init(Game* game, const EnemyType enemy_type) {
 	current_health = max_health;
 
 	collider.radius = 16.0f;
+
+	state = Walking;
 }
 
 void Enemy::Update(const Game* game) {
@@ -108,6 +117,7 @@ void Enemy::Die(const Game* game) {
 	if (current_die_time >= die_duration) {
 		// Need to remove this enemy from the level, Just call a level.QueueRemoveEnemy() function.
 		// That will remove enemies end of frame.
+		SetState(Dead);
 	}
 }
 
@@ -141,6 +151,15 @@ void Enemy::SetState(const State new_state) {
 		break;
 	case State::Dying:
 		dying_sprite.Reset();
+		current_die_time = 0;
 		break;
+	}
+}
+
+void Enemy::Hit(float damage) {
+	current_health -= damage;
+
+	if (current_health <= 0) {
+		SetState(Dying);
 	}
 }
