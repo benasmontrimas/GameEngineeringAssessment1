@@ -10,6 +10,9 @@ void Player::Init(Game* game) {
 	walking_sprite.images[1] = &game->images[PlayerWalk3];
 	walking_sprite.animation_framerate = 4;
 
+	dying_sprite.Init(1);
+	dying_sprite.images[0] = &game->images[PlayerWalk2];
+
 	// Need to make the dying sprite. Don't have any images for it yet.
 
 	collider.radius = 32.0f;
@@ -80,7 +83,7 @@ void Player::SetState(const State new_state) {
 	if (state == new_state) return;
 
 	state = new_state;
-	
+
 	// Make sure were playing the new animation from the start.
 	switch (state) {
 	case State::Idle:
