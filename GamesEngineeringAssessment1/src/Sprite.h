@@ -6,6 +6,7 @@ class Game;
 class Sprite {
 public:
 	void Init(int count);
+	void Deinit();
 	void Update(const Game* game);
 
 	void Reset();

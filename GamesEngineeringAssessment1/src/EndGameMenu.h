@@ -16,7 +16,7 @@ public:
 	int time_survived;
 
 private:
-	Sprite background_;
+	Sprite background_{};
 
 	Button restart_button_;
 	Button continue_button_;

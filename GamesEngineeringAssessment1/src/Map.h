@@ -2,14 +2,18 @@
 
 #include <string>
 
+#include "CustomBase.h"
 #include "Sprite.h"
 
 class Game;
 
+struct CollisionData {
+	Vec2 position{};
+};
+
 // Need to be able to load tile sets from files. just create arrays of ints to specify offsets into the sprite array
 // signifying which tile to use. Can add header to specify which tile set to use, allows changing tiles for same set.
 class TileMap {
-
 	enum TileType {
 		Water,
 		Grass,
@@ -38,4 +42,9 @@ public:
 	int tilemap_width;
 	int tilemap_height;
 	Sprite** tilemap;
+	bool* collidable;
+
+	// Store all blockable tiles here to reduce checks.
+	int collision_data_count;
+	CollisionData collision_data[5000]; // Set to initial size big enough that if the entire screen is collidable tiles we dont go out of bounds.
 };

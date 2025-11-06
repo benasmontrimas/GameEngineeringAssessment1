@@ -17,6 +17,7 @@ public:
 
 private:
 	int projectile_count = 0;
-	Projectile projectiles[100];
+	static constexpr int max_projectile_count = 100;
+	Projectile projectiles[max_projectile_count];
 	Vec2 attack_direction_{.x = 1, .y = 0};
 };

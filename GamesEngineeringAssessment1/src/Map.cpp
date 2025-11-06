@@ -17,7 +17,7 @@ void TileMap::Init(Game* game, std::string level_path) {
 	};
 
 	for (int type = Water; type < TILE_TYPE_COUNT; type++) {
-		tiles[type].Init(8);
+		tiles[type].Init(frame_count[type]);
 		for (int i = 0; i < frame_count[type]; i++) {
 			tiles[type].images[i] = &game->images[image_offset[type] + i];
 		}
@@ -34,6 +34,7 @@ void TileMap::Init(Game* game, std::string level_path) {
 		tilemap_width = 1;
 		tilemap_height = 1;
 		tilemap = new Sprite*[1];
+		collidable = new bool[1];
 		tilemap[0] = &tiles[0];
 		return;
 	}
@@ -61,13 +62,16 @@ void TileMap::Init(Game* game, std::string level_path) {
 	tilemap_height = std::stoi(line);
 
 	tilemap = new Sprite*[tilemap_width * tilemap_height];
+	collidable = new bool[tilemap_width * tilemap_height];
 
 	for (int y = 0; y < tilemap_height; y++) {
 		std::getline(file, line);
 		for (int x = 0; x < tilemap_width; x++) {
+			collidable[x + (y * tilemap_width)] = false; // Default to false
 			switch (line[x]) {
 			case 'W':
 				tilemap[x + (y * tilemap_width)] = &tiles[Water];
+				collidable[x + (y * tilemap_width)] = true;
 				break;
 			case 'P':
 				tilemap[x + (y * tilemap_width)] = &tiles[Path];
@@ -84,7 +88,7 @@ void TileMap::Update(Game* game) {
 	// Need to get all tiles visible to camera and load them, and unload all others.
 	// Only ever need (window_width / tile_size) + 1 tiles. (well I thought, still have gaps, so did +2).
 
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < TILE_TYPE_COUNT; i++) {
 		tiles[i].Update(game);
 	}
 }
@@ -117,6 +121,8 @@ void TileMap::Draw(Game* game)
 	while (start_index_y < 0) start_index_y += tilemap_height;
 	int tilemap_index_y = start_index_y % tilemap_height;
 
+	// Reset collision data, so we can recalc every frame
+	collision_data_count = 0;
 	for (unsigned int y = 0; y < tiles_needed_y; y++) {
 		for (unsigned int x = 0; x < tiles_needed_x; x++) {
 			const float x_pos = static_cast<float>(render_x) + (static_cast<float>(x) * static_cast<float>(tile_size));
@@ -127,6 +133,13 @@ void TileMap::Draw(Game* game)
 			Sprite* sprite_to_draw = tilemap[final_x + (final_y * tilemap_width)];
 
 			game->DrawSprite(*sprite_to_draw, Vec2{x_pos, y_pos});
+
+			// check if not collidable and continue
+			if (!collidable[final_x + (final_y * tilemap_width)]) continue;
+			// else add to collision data
+			collision_data[collision_data_count].position = Vec2{x_pos, y_pos};
+			collision_data_count++;
+
 		}
 	}
 }

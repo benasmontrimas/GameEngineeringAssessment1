@@ -24,6 +24,9 @@ void PauseMenu::Init(Game* game)
 
 void PauseMenu::Update(Game* game)
 {
+	background_.Update(game);
+
+	// Parent checks for press.
 	continue_button_.Update(game);
 
 	save_button_.Update(game);

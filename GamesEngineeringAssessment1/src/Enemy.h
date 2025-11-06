@@ -3,13 +3,14 @@
 #include "CustomBase.h"
 #include "Sprite.h"
 #include "Collider.h"
+#include "Projectile.h"
 
 class Game;
 class Player;
 
 // OK i want a normal zombie, archer, turret, and bomber, no tank. Bomber will run at player and on collision blow up and deal damage.
 enum EnemyType {
-	Zombie, Archer, Bomber, Turret, ENEMY_TYPE_COUNT
+	Swordsman, Archer, Bomber, Turret, ENEMY_TYPE_COUNT
 };
 
 static constexpr int ENEMY_HEALTH_BY_TYPE[] = { 100, 50, 50, 100 };
@@ -28,12 +29,13 @@ public:
 	Enemy() = default;
 
 	void Init(Game* game, EnemyType enemy_type);
-	void Update(const Game* game);
+	void Deinit();
+	void Update(Game* game);
 	void Draw(Game* game);
 
-	void Walk(const Game* game);
-	void Attack(const Game* game);
-	void Die(const Game* game);
+	void Walk(Game* game);
+	void Attack(Game* game);
+	void Die(Game* game);
 
 	void Hit(float damage);
 
@@ -42,9 +44,9 @@ public:
 	Player* player;
 
 	EnemyType type;
-	Sprite sprite;
-	Sprite attacking_sprite;
-	Sprite dying_sprite;
+	Sprite sprite{};
+	Sprite attacking_sprite{};
+	Sprite dying_sprite{};
 	Collider collider{};
 	Vec2 position;
 
@@ -59,4 +61,8 @@ public:
 
 	float die_duration;
 	float current_die_time;
+
+	int projectile_count = 0;
+	static constexpr int max_projectile_count = 10;
+	Projectile projectiles[max_projectile_count];
 };

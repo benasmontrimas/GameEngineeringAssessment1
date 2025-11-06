@@ -4,6 +4,7 @@
 #include "Level.h"
 #include "Map.h"
 #include "PauseMenu.h"
+#include "EndGameMenu.h"
 #include "Player.h"
 
 class Game;
@@ -33,13 +34,16 @@ public:
 	Player player;
 	Enemy enemies[10000];
 	unsigned int enemies_alive{ 0 };
+	TileMap level_map{};
 
 private:
 	// ReSharper disable once CppUninitializedNonStaticDataMember
 	TileMap level_map_{};
 	HUD hud_{};
 	PauseMenu pause_menu_;
+	EndGameMenu end_game_menu_;
 
+	int score_{0};
 	float run_time_{};
 	State state_{ Active };
 

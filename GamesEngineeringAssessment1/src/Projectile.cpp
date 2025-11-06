@@ -1,8 +1,7 @@
 #include "Projectile.h"
 #include "Game.h"
 
-void Projectile::Init(Game* game, Sprite projectile_sprite) {
-    sprite = projectile_sprite;
+void Projectile::Init(Game* game) {
     collider.radius = 1.0f;
 }
 
@@ -28,7 +27,7 @@ void Projectile::Update(Game* game) {
         is_dead = true;
     }
 
-    collider.center = position;
+    collider.center = position + Vec2{float(sprite.GetImage()->width / 2), float(sprite.GetImage()->height / 2)};
 }
 
 void Projectile::Draw(Game* game) {

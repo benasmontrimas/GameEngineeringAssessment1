@@ -22,18 +22,20 @@ void MainMenuLevel::Init(Game* game) {
 
 	quit_button_.Init(game, "Quit");
 	quit_button_.position = Vec2{.x = button_x, .y = 620.0f };
+
+	// Reset so our water still plays its animation
+	game->game_time_multiplier = 1.0f;
 }
 
 void MainMenuLevel::Update(Game* game) {
 	bg_.Update(game);
 
-	// All these actions need to queue (well we can probably quit now), but need to send message to game to tell it this is what it should do after this frame ends.
 	play_button_.Update(game);
 	if (play_button_.IsPressed())
 	{
 		// Play
 		GameLevel* game_level = new GameLevel;
-		if (!game->SetNextLevel(game_level)) delete game_level; // If a level is already queued, we just delete this one, next frame the level should already change.
+		if (!game->SetNextLevel(game_level)) delete game_level; // If a level is already queued, we just delete this one
 	}
 
 	settings_button_.Update(game);

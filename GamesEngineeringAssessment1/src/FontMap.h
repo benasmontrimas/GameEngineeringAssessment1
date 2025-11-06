@@ -2,6 +2,7 @@
 
 #include <string>
 #include "CustomBase.h"
+#include "Sprite.h"
 
 class Game;
 
@@ -12,10 +13,12 @@ namespace GamesEngineeringBase {
 class FontMap {
 public:
 	void Init(GamesEngineeringBase::Image* image, int w, int h, int _chars_per_line);
-	void DrawString(Game* game, const std::string& string, const Vec2& position) const;
+	void DrawString(Game* game, const std::string& string, const Vec2& position);
 
 public:
 	GamesEngineeringBase::Image* image{};
+
+	Sprite char_sprite{};
 
 	int char_image_width{};
 	int char_image_height{};

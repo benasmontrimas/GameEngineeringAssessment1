@@ -4,20 +4,30 @@
 void GameLevel::Init(Game* game)
 {
 	player.Init(game);
-	level_map_.Init(game, "resources/LevelLayouts/Layout1.txt");
+	// Move player into the map.
+	player.position.x = 200;
+	player.position.y = 200;
+	level_map.Init(game, "resources/LevelLayouts/Layout1.txt");
 	hud_.Init(game);
 	pause_menu_.Init(game);
+	end_game_menu_.Init(game);
 
 	game->camera.SetFollow(&player.position);
 	game->camera.position = player.position;
 
 	state_ = Active;
+	score_ = 0;
 }
 
 // Check if escape pressed, if so enter pause, and set multiplier to 0
 void GameLevel::Update(Game* game)
 {
 	esc_pressed_ = game->window.keyPressed(VK_ESCAPE);
+
+	// NOTE: FOR TESTING
+	if (game->window.keyPressed('Q')) {
+		state_ = Ended;
+	}
 
 	switch (state_)
 	{
@@ -33,6 +43,8 @@ void GameLevel::Update(Game* game)
 
 		if (run_time_ > time_limit)
 		{
+			end_game_menu_.time_survived = 120;
+			end_game_menu_.final_score = score_;
 			state_ = Ended;
 		}
 
@@ -65,6 +77,7 @@ void GameLevel::Update(Game* game)
 		game->game_time_multiplier = 0.0f;
 
 		// Create End Game menu
+		end_game_menu_.Update(game);
 
 		break;
 	}
@@ -80,21 +93,27 @@ void GameLevel::Update(Game* game)
 		enemies[i].Update(game);
 		// swap and pop
 		if (enemies[i].state == Enemy::Dead) {
+			enemies[i].Deinit();
 			enemies[i] = enemies[enemies_alive - 1];
+			score_++;
 			enemies_alive--;
 		}
 	}
 
-	level_map_.Update(game);
+	level_map.Update(game);
 
 	hud_.Update(game);
 }
 
 void GameLevel::Draw(Game* game)
 {
-	if (state_ == Paused)
-	{
+	switch (state_) {
+	case (Paused):
 		pause_menu_.Draw(game);
+		break;
+	case Ended:
+		end_game_menu_.Draw(game);
+		break;
 	}
 
 	hud_.Draw(game, run_time_);
@@ -105,7 +124,7 @@ void GameLevel::Draw(Game* game)
 		enemies[i].Draw(game);
 	}
 
-	level_map_.Draw(game);
+	level_map.Draw(game);
 }
 
 void GameLevel::Shutdown(Game* game)
@@ -134,8 +153,8 @@ void GameLevel::SpawnEnemy(Game* game)
 		multiplier = static_cast<float>(800) / normalized_spawn_vector.y;
 	}
 
+	enemies[enemies_alive].Init(game, EnemyType(rand() % ENEMY_TYPE_COUNT));
 	enemies[enemies_alive].position = player.position + (normalized_spawn_vector * abs(multiplier));
-	enemies[enemies_alive].Init(game, Zombie);
 	enemies[enemies_alive].player = &player;
 	enemies_alive++;
 }

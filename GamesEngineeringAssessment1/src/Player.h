@@ -14,6 +14,7 @@ class Player {
 		Idle,
 		Walking,
 		Dying,
+		Dead,
 	};
 
 public:
@@ -26,19 +27,29 @@ public:
 	void HandleInput(const Game* game);
 	void SetState(State new_state);
 
+	void Hit(float damage);
+
 	State state{};
 
 	Sprite sprite{};
 	Sprite walking_sprite{};
 	Sprite dying_sprite{};
 
+	Vec2 last_position{};
 	Vec2 position{0, 0};
 	Collider collider{};
 
 	// Add weapons, one projectile one aoe. Need to get distance to enemies to attack closest.
 
+	float max_health{150};
+	float current_health{};
+	float time_dying{};
+
 	float movement_speed{ 150 };
 	Vec2 movement_direction{};
+
+	float collision_cooldown{1.0f};
+	float time_since_last_collision{0.0f};
 
 	Weapon* weapons[2] {nullptr, nullptr};
 };

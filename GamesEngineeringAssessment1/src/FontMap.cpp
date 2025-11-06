@@ -8,16 +8,15 @@ void FontMap::Init(GamesEngineeringBase::Image* _image, const int w, const int h
 	char_image_width = w;
 	char_image_height = h;
 	chars_per_line = _chars_per_line;
-}
 
-// TODO: Can add support for new line char, just need to reset x offset and set y offset to the height of the chars.
-void FontMap::DrawString(Game* game, const std::string& string, const Vec2& position) const
-{
-	Sprite char_sprite;
 	char_sprite.Init(1);
 	char_sprite.images[0] = image;
 	char_sprite.depth = INT_MIN;
+}
 
+// TODO: Can add support for new line char, just need to reset x offset and set y offset to the height of the chars.
+void FontMap::DrawString(Game* game, const std::string& string, const Vec2& position)
+{
 	for (int i = 0; i < string.size(); i++) {
 		char c = string[i];
 		if (c == ' ') continue;

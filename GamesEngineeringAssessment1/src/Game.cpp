@@ -20,6 +20,7 @@ void Game::Init() {
 	// Needs to be after we create window.
 	LoadAssets();
 
+	// Never gets freed but doesnt matter as when the game quits the program does as well.
 	depth_buffer = static_cast<int*>(malloc(sizeof(int) * WINDOW_WIDTH * WINDOW_HEIGHT));
 
 	font32.Init(&images[Font32Pt], 32, 32, 8);
@@ -83,7 +84,6 @@ void Game::Render() {
 
 // Need to find better way to do this, this is very prone to error especially once we get to large numbers of resources.
 static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
-	"resources/MainMenuBG.png",
 	"resources/MainMenuHeader.png",
 	"resources/ButtonBG.png",
 	"resources/PopupMenuBG.png",
@@ -106,7 +106,24 @@ static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
 	"resources/PlayerWalk8.png",
 	"resources/PlayerWalk9.png",
 
-	"resources/Player.png",
+	"resources/PlayerDeath1.png",
+	"resources/PlayerDeath2.png",
+	"resources/PlayerDeath3.png",
+	"resources/PlayerDeath4.png",
+	"resources/PlayerDeath5.png",
+	"resources/PlayerDeath6.png",
+	"resources/PlayerDeath7.png",
+	"resources/PlayerDeath8.png",
+	"resources/PlayerDeath9.png",
+	"resources/PlayerDeath10.png",
+	"resources/PlayerDeath11.png",
+	"resources/PlayerDeath12.png",
+	"resources/PlayerDeath13.png",
+	"resources/PlayerDeath14.png",
+	"resources/PlayerDeath15.png",
+	"resources/PlayerDeath16.png",
+	"resources/PlayerDeath17.png",
+	"resources/PlayerDeath18.png",
 
 	"resources/SwordsmanWalk1.png",
 	"resources/SwordsmanWalk2.png",
@@ -135,6 +152,17 @@ static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
 	"resources/SwordsmanAttack14.png",
 	"resources/SwordsmanAttack15.png",
 
+	"resources/SwordsmanDeath1.png",
+	"resources/SwordsmanDeath2.png",
+	"resources/SwordsmanDeath3.png",
+	"resources/SwordsmanDeath4.png",
+	"resources/SwordsmanDeath5.png",
+	"resources/SwordsmanDeath6.png",
+	"resources/SwordsmanDeath7.png",
+	"resources/SwordsmanDeath8.png",
+	"resources/SwordsmanDeath9.png",
+	"resources/SwordsmanDeath10.png",
+
 	"resources/ArcherWalk1.png",
 	"resources/ArcherWalk2.png",
 	"resources/ArcherWalk3.png",
@@ -146,7 +174,82 @@ static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
 	"resources/ArcherWalk9.png",
 	"resources/ArcherWalk10.png",
 
-	"resources/Tank.png",
+	"resources/ArcherAttack1.png",
+	"resources/ArcherAttack2.png",
+	"resources/ArcherAttack3.png",
+	"resources/ArcherAttack4.png",
+	"resources/ArcherAttack5.png",
+	"resources/ArcherAttack6.png",
+	"resources/ArcherAttack7.png",
+	"resources/ArcherAttack8.png",
+
+	"resources/ArcherDeath1.png",
+	"resources/ArcherDeath2.png",
+	"resources/ArcherDeath3.png",
+	"resources/ArcherDeath4.png",
+	"resources/ArcherDeath5.png",
+	"resources/ArcherDeath6.png",
+	"resources/ArcherDeath7.png",
+	"resources/ArcherDeath8.png",
+	"resources/ArcherDeath9.png",
+	"resources/ArcherDeath10.png",
+	"resources/ArcherDeath11.png",
+	"resources/ArcherDeath12.png",
+
+	"resources/ArcherArrow1.png",
+	"resources/ArcherArrow2.png",
+	"resources/ArcherArrow3.png",
+	"resources/ArcherArrow4.png",
+
+	"resources/TurretIdle1.png",
+	"resources/TurretIdle2.png",
+	"resources/TurretIdle3.png",
+
+	"resources/TurretAttack1.png",
+	"resources/TurretAttack2.png",
+	"resources/TurretAttack3.png",
+	"resources/TurretAttack4.png",
+	"resources/TurretAttack5.png",
+
+	"resources/TurretDeath1.png",
+	"resources/TurretDeath2.png",
+	"resources/TurretDeath3.png",
+	"resources/TurretDeath4.png",
+	"resources/TurretDeath5.png",
+	"resources/TurretDeath6.png",
+	"resources/TurretDeath7.png",
+	"resources/TurretDeath8.png",
+
+	"resources/BomberWalk1.png",
+	"resources/BomberWalk2.png",
+	"resources/BomberWalk3.png",
+	"resources/BomberWalk4.png",
+	"resources/BomberWalk5.png",
+	"resources/BomberWalk6.png",
+	"resources/BomberWalk7.png",
+	"resources/BomberWalk8.png",
+	"resources/BomberWalk9.png",
+	"resources/BomberWalk10.png",
+
+	"resources/BomberAttack1.png",
+	"resources/BomberAttack2.png",
+	"resources/BomberAttack3.png",
+	"resources/BomberAttack4.png",
+	"resources/BomberAttack5.png",
+	"resources/BomberAttack6.png",
+
+	"resources/BomberDeath1.png",
+	"resources/BomberDeath2.png",
+	"resources/BomberDeath3.png",
+	"resources/BomberDeath4.png",
+	"resources/BomberDeath5.png",
+	"resources/BomberDeath6.png",
+	"resources/BomberDeath7.png",
+	"resources/BomberDeath8.png",
+	"resources/BomberDeath9.png",
+	"resources/BomberDeath10.png",
+	"resources/BomberDeath11.png",
+	"resources/BomberDeath12.png",
 
 	"resources/ItemBorder.png",
 
@@ -173,18 +276,6 @@ static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
 	"resources/Grass1.png",
 
 	"resources/Path1.png",
-
-	"resources/0.png",
-	"resources/1.png",
-	"resources/2.png",
-	"resources/3.png",
-	"resources/4.png",
-	"resources/5.png",
-	"resources/6.png",
-	"resources/7.png",
-	"resources/8.png",
-	"resources/9.png",
-	"resources/10.png",
 
 	"resources/MonoFont32pt.png",
 	"resources/MonoFont16pt.png",

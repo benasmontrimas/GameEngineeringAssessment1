@@ -13,7 +13,7 @@ public:
 
 private:
 	TileMap bg_;
-	Sprite header_;
+	Sprite header_{};
 
 	// TODO: Need a button class... This will get messy otherwise.
 	Button play_button_;

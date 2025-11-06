@@ -11,8 +11,8 @@ public:
 	void Update(Game* game);
 	void Draw(Game* game, float elapsed_seconds) const;
 
-	Sprite weapon_1_border;
-	Sprite weapon_1_icon;
+	Sprite weapon_1_border{};
+	Sprite weapon_1_icon{};
 
-	Sprite weapon_2_border;
+	Sprite weapon_2_border{};
 };

@@ -1,0 +1,12 @@
+# TODO
+- Save files
+- Add bomber attack (explosion)
+- AOE attack
+- Fixed map type
+- Add another tile type
+- Powerup
+- Tile collisions
+    - Make it not shit
+- Player health
+- Fix memory leaks on sprites, if we need to just allocate a bigger array than needed...
+    - Slightly wastes memory, but means all memory is allocated up front for levels.

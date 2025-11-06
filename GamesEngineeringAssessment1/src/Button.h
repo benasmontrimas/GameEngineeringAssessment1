@@ -22,7 +22,7 @@ public:
 	Vec2 position{};
 
 private:
-	Sprite background_;
+	Sprite background_{};
 	std::string text_;
 
 	bool is_hovered_{ false };

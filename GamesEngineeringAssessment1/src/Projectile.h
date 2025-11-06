@@ -8,14 +8,14 @@ class Game;
 
 class Projectile {
 public:
-    void Init(Game* game, Sprite projectile_sprite);
+    void Init(Game* game);
     void Shoot(Game* game, const Vec2& start_position, const Vec2& projectile_direction, float projectile_speed, float projectile_life_time);
     void Update(Game* game);
     void Draw(Game* game);
 
 public:
     Collider collider;
-    Sprite sprite;
+    Sprite sprite{};
 
     Vec2 position;
     Vec2 direction;

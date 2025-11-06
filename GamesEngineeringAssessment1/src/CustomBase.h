@@ -32,13 +32,22 @@ struct Vec2 {
 		return Vec2{.x = x * val, .y = y * val };
 	}
 
+	Vec2 operator*(const Vec2& o) const {
+		return Vec2{x * o.x, y * o.y};
+	}
+
 	Vec2 operator/(const float val) const {
 		return Vec2{.x = x / val, .y = y / val };
 	}
 
+	bool operator==(const Vec2& other) const
+	{
+		return (x == other.x and y == other.y);
+	}
+
 	bool operator!=(const Vec2& other) const
 	{
-		return (x != other.x or y != other.y);
+		return !(*this == other);
 	}
 
 	[[nodiscard]] float MagSquared() const {
@@ -51,6 +60,8 @@ struct Vec2 {
 };
 
 Vec2 NormalizeVec2(const Vec2& vec);
+
+float Dot(const Vec2& a, const Vec2& b);
 
 
 // TODO: Is this useful? Ideally i replace all my c arrays with this. Need to test if it works the same way.
