@@ -36,8 +36,6 @@ void Game::Init() {
 }
 
 void Game::Run() {
-	std::cout << running << "\n";
-
 	float count = 0.0f;
 	int frame_count = 0;
 
@@ -206,8 +204,8 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
 	const Vec2 camera_pos = camera.position;
 
 	// Want to round the position so movement is smoothed between pixels (I dont know if this actually has any effect).
-	int round_x = static_cast<int>(round(position.x));
-	int round_y = static_cast<int>(round(position.y));
+	const int round_x = static_cast<int>(round(position.x));
+	const int round_y = static_cast<int>(round(position.y));
 
 	// The world position from screen 0, 0 -> w, h
 	// This can be calculated once and cached before all our draw calls
@@ -264,20 +262,99 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
 	}
 }
 
-void Game::DrawSprite(const Sprite& sprite, const Vec2& position, const float rotation, const Vec2& around)
+static Vec2 RotateVec2(Vec2& vec, const float angle)
 {
 	Vec2 rotation_matrix[2] = {
 		{
-			cos(rotation), -sin(rotation)
+			.x = cos(angle), .y = -sin(angle)
 		},
 		{
-			sin(rotation), cos(rotation)
+			.x = sin(angle), .y = cos(angle)
 		}
 	};
 
-	Vec2 pixel_position = position - around;
-	// Vec2 rotated_position = dot(rotation_matrix, pixel_position)
-	// draw(around + rotated_position)
+	const Vec2 res = {
+		rotation_matrix[0][0] * vec[0] + rotation_matrix[0][1] * vec[1],
+		rotation_matrix[1][0] * vec[0] + rotation_matrix[1][1] * vec[1]
+	};
+
+	return res;
+}
+
+// Not great, lots of duplicate code from the other draw sprite, but we need to do different maths and bounds checks.
+// Could probably pull the major bits out into functions, ie getting screen space positions, and colour calculations.
+// Could also just use this for all sprite drawing with default 0 for rotation, but will be slightly slower as we cant
+// Check bounds as easy.
+void Game::DrawSprite(const Sprite& sprite, const Vec2& position, const float rotation, const Vec2& around)
+{
+	const GamesEngineeringBase::Image* image = sprite.GetImage();
+	if (!image) return;
+
+	const Vec2 camera_pos = camera.position;
+
+	// Want to round the position so movement is smoothed between pixels (I don't know if this actually has any effect).
+	const int round_x = static_cast<int>(round(position.x));
+	const int round_y = static_cast<int>(round(position.y));
+
+	// The world position from screen 0, 0 -> w, h
+	// This can be calculated once and cached before all our draw calls
+	const int world_x_start = static_cast<int>(camera_pos.x) - (static_cast<int>(window_width) / 2);
+	const int world_x_end = world_x_start + static_cast<int>(window_width);
+	const int world_y_start = static_cast<int>(camera_pos.y) - (static_cast<int>(window_height) / 2);
+	const int world_y_end = world_y_start + static_cast<int>(window_height);
+
+	const int image_x_start = sprite.x_offset[0];
+	const int image_x_end = sprite.x_offset[1] == -1 ? static_cast<int>(image->width) : sprite.x_offset[1];
+	const int image_width = image_x_end - image_x_start;
+
+	const int image_y_start = sprite.y_offset[0];
+	const int image_y_end = sprite.y_offset[1] == -1 ? static_cast<int>(image->height) : sprite.y_offset[1];
+	const int image_height = image_y_end - image_y_start;
+
+	// start and end from 0 -> window_width
+	const int image_visible_offset_x_start = round_x - world_x_start;
+	const int image_visible_offset_x_end = round_x + image_width - world_x_start;
+
+	const int image_visible_offset_y_start = round_y - world_y_start;
+	const int image_visible_offset_y_end = round_y + image_height - world_y_start;
+
+	const int image_x_offset = image_visible_offset_x_start - (round_x - world_x_start);
+	const int image_y_offset = image_visible_offset_y_start - (round_y - world_y_start);
+	int image_y = image_y_start + image_y_offset;
+
+	for (int y = image_visible_offset_y_start; y < image_visible_offset_y_end; y++) {
+		int image_x = image_x_start + image_x_offset - 1; // Start at - 1 so we can increment at start of loop.
+		if (sprite.flip) image_x = image_x_end;
+		for (int x = image_visible_offset_x_start; x < image_visible_offset_x_end; x++) {
+			if (sprite.flip) image_x--;
+			else image_x++;
+
+			// If alpha 0, skip
+			if (image->alphaAtUnchecked(image_x, image_y) == 0) continue;
+
+			// Else draw and update depth buffer.
+			const unsigned char* image_colour = image->atUnchecked(image_x, image_y);
+
+			unsigned char final_colour[3] = {
+				static_cast<unsigned char>((sprite.modulation_colour[0] * image_colour[0]) / 255),
+				static_cast<unsigned char>((sprite.modulation_colour[1] * image_colour[1]) / 255),
+				static_cast<unsigned char>((sprite.modulation_colour[2] * image_colour[2]) / 255),
+			};
+
+			Vec2 screen_position_vec = Vec2(float(x), float(y)) - (Vec2{ float(image_visible_offset_x_start), float(image_visible_offset_y_start)}) - around;
+			Vec2 rotated_pos = RotateVec2(screen_position_vec, rotation) + (Vec2{ float(image_visible_offset_x_start), float(image_visible_offset_y_start) }) + around;
+
+			if (rotated_pos.x < 0 or rotated_pos.x >= window_width) continue;
+			if (rotated_pos.y < 0 or rotated_pos.y >= window_height) continue;
+
+			// If something is already drawn closer than this, skip.
+			if (sprite.depth >= depth_buffer[(int(rotated_pos.y) * window_width) + int(rotated_pos.x)]) continue;
+
+			window.draw(int(rotated_pos.x), int(rotated_pos.y), &final_colour[0]);
+			depth_buffer[(int(rotated_pos.y) * 1200) + int(rotated_pos.x)] = sprite.depth;
+		}
+		image_y++;
+	}
 }
 
 void Game::DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position) {

@@ -9,35 +9,31 @@ void Sword::Init(Game* game) {
 	name = "Sword";
 	description = "A fast swinging auto attack.";
 
-	cooldown = 1.0f;
+	cooldown = 0.5f;
 	damage = 100.0f;
 
-	// Each projectiles gets a copy of this, dont need to worry about keeping a ref to it.
+	// Each projectiles gets a copy of this, don't need to worry about keeping a ref to it.
 	Sprite projectile_sprite;
 	projectile_sprite.Init(8);
 	for (int animation_index = 0; animation_index < 8; animation_index++) {
 		projectile_sprite.images[animation_index] = &game->images[SwordThrow1 + animation_index];
 	}
+	projectile_sprite.animation_framerate = 16;
 
 	for (int i = 0; i < 100; i++) {
 		projectiles[i].Init(game, projectile_sprite);
 	}
-
-	// Need to set sprites, don't have any yet;
-	//attack_animation
-	//sprite
-	//icon
 }
 
 void Sword::Attack(Game* game) {
 	if (projectile_count >= 100) return;
 	// Make it just spawn a sword projectile.
 	// No attack duration.
-	GameLevel* level = (GameLevel*)game->GetLevel();
-	Player& player = level->player;
+	const GameLevel* level = dynamic_cast<GameLevel*>(game->GetLevel());
+	const Player& player = level->player;
 
 	GetAttackDirection(game);
-	projectiles[projectile_count].Shoot(game, player.position, attack_direction_, 100, 3.0f);
+	projectiles[projectile_count].Shoot(game, player.position, attack_direction_, 400, 3.0f);
 	projectile_count++;
 }
 
@@ -49,9 +45,9 @@ void Sword::Update(Game* game) {
 	}
 
 
-	GameLevel* level = (GameLevel*)game->GetLevel();
+	GameLevel* level = dynamic_cast<GameLevel*>(game->GetLevel());
 	Enemy* enemies = level->enemies;
-	int enemies_alive = level->enemies_alive;
+	const int enemies_alive = static_cast<int>(level->enemies_alive);
 
 	// We go backwards so that we can remove projectiles if they collide.
 	for (int i = projectile_count - 1; i >= 0; i--) {

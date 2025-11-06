@@ -19,6 +19,8 @@ void Projectile::Shoot(Game* game, const Vec2& start_position, const Vec2& proje
 }
 
 void Projectile::Update(Game* game) {
+    sprite.Update(game);
+
     position = position + (direction * speed * game->game_time);
     current_life_time += game->game_time;
 
@@ -30,5 +32,7 @@ void Projectile::Update(Game* game) {
 }
 
 void Projectile::Draw(Game* game) {
-    game->DrawSprite(sprite, position);
+    float angle = atan2(direction.x, -direction.y);
+
+    game->DrawSprite(sprite, position, angle, {24, 32});
 }
