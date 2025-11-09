@@ -96,7 +96,7 @@ void Enemy::Update(Game* game) {
 		projectiles[i].Update(game);
 
 		// Remove dead projectiles.
-		if (projectiles[i].is_dead) {
+		if (projectiles[i].IsDead()) {
 			projectiles[i] = projectiles[projectile_count - 1];
 			projectile_count--;
 			continue;

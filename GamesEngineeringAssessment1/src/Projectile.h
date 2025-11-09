@@ -13,6 +13,8 @@ public:
     void Update(const Game* game);
     void Draw(Game* game) const;
 
+    bool IsDead() const;
+
 public:
     Collider collider;
     Sprite sprite{};
@@ -23,6 +25,4 @@ public:
 
     float life_time;
     float current_life_time;
-
-    bool is_dead;
 };

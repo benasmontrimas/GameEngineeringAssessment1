@@ -17,7 +17,7 @@ public:
 	float distance_to_move_a_second;
 	float max_speed = 150.0f;
 	float starting_speed = 100.0f;
-
+		
 	bool capped_to_boundary;
 	Vec2 min_position;
 	Vec2 max_position;

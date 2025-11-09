@@ -177,6 +177,9 @@
     <Image Include="resources\player.jpg" />
     <Image Include="resources\player.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\TODO.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

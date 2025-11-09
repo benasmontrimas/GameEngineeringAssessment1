@@ -17,7 +17,7 @@ void Sword::Update(Game* game) {
 	last_attack += game->game_time;
 	if (last_attack >= cooldown) {
 		Attack(game);
-		// If power up active we just reduce cooldown by 2
+		// If power up active we just reduce cooldown by half
 		if (player.power_up_time_left > 0.0f) {
 			last_attack -= cooldown / 2;
 		} else {
@@ -29,7 +29,7 @@ void Sword::Update(Game* game) {
 	for (int i = projectile_count_ - 1; i >= 0; i--) {
 		projectiles_[i].Update(game);
 
-		if (projectiles_[i].is_dead) {
+		if (projectiles_[i].IsDead()) {
 			projectiles_[i] = projectiles_[projectile_count_ - 1];
 			projectile_count_--;
 			continue;

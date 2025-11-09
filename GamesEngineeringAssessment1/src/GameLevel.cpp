@@ -81,7 +81,7 @@ void GameLevel::Update(Game* game)
 
 		// Just spawns an enemy every second based on how many seconds passed.
 		if (run_time_ > last_enemy_spawn_) {
-			float enemy_spawn_divisor = 15;;
+			float enemy_spawn_divisor = 15;
 			switch (difficulty)
 			{
 			case Easy:
@@ -96,7 +96,7 @@ void GameLevel::Update(Game* game)
 			default: ;
 			}
 
-			const int enemies_to_spawn = static_cast<int>(run_time_ / enemy_spawn_divisor);
+			const int enemies_to_spawn = max(1, static_cast<int>(run_time_ / enemy_spawn_divisor));
 			for (int i = 0; i < enemies_to_spawn; i++) {
 				SpawnEnemy(game);
 			}
