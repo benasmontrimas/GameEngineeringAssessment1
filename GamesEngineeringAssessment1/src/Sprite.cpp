@@ -6,17 +6,11 @@
 void Sprite::Init(const int count) {
 	current_frame = 0;
 	image_count = count;
-	images = static_cast<GamesEngineeringBase::Image**>(malloc(sizeof(GamesEngineeringBase::Image*) * image_count));
-}
-
-void Sprite::Deinit() {
-	free(images);
-	images = nullptr;
 }
 
 void Sprite::Update(const Game* game) {
 	current_frame_duration += game->game_time;
-	float time_per_frame = 1.0f / animation_framerate;
+	const float time_per_frame = 1.0f / animation_frame_rate;
 
 	while (current_frame_duration >= time_per_frame) {
 		current_frame++;
@@ -30,7 +24,7 @@ void Sprite::Reset() {
 	current_frame_duration = 0;
 }
 
-GamesEngineeringBase::Image* Sprite::GetImage() const {
+GameImages Sprite::GetImage() const {
 	return images[current_frame];
 }
 

@@ -1,15 +1,17 @@
 #pragma once
 
-#include "CustomBase.h"
+#include "Vec2.h"
 #include "Sprite.h"
 #include "Collider.h"
+#include "Sword.h"
+#include "AOEWeapon.h"
 
 class Game;
-class Weapon;
 
 // TODO: Create a weapon class, add slots for the weapons on the player, and as they equip them,
 // Loop this list and activate them. Simple.
 class Player {
+public:
 	enum class State : unsigned char {
 		Idle,
 		Walking,
@@ -22,7 +24,7 @@ public:
 
 	void Init(Game* game);
 	void Update(Game* game);
-	void Draw(Game* game) const;
+	void Draw(Game* game);
 
 	void HandleInput(const Game* game);
 	void SetState(State new_state);
@@ -51,5 +53,13 @@ public:
 	float collision_cooldown{1.0f};
 	float time_since_last_collision{0.0f};
 
-	Weapon* weapons[2] {nullptr, nullptr};
+	// If I had weapons the player could choose from and select i would do it this way. But we have 2 weapons that are set.
+	// Weapon* weapons[2] {nullptr, nullptr};
+	Sword sword;
+	AOEWeapon aoe;
+
+	float power_up_time_left{};
+
+	bool i_pressed_last_frame = false;
+	bool is_invincible = false;
 };

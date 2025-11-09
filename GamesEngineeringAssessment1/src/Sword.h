@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CustomBase.h"
+#include "Vec2.h"
 #include "Projectile.h"
 #include "Weapon.h"
 
@@ -16,8 +16,8 @@ public:
 	void GetAttackDirection(const Game* game);
 
 private:
-	int projectile_count = 0;
+	int projectile_count_ = 0;
 	static constexpr int max_projectile_count = 100;
-	Projectile projectiles[max_projectile_count];
+	Projectile projectiles_[max_projectile_count] = {};
 	Vec2 attack_direction_{.x = 1, .y = 0};
 };

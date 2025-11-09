@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "CustomBase.h"
+#include "Vec2.h"
 #include "Sprite.h"
 
 class Game;
@@ -11,24 +11,92 @@ struct CollisionData {
 	Vec2 position{};
 };
 
-// Need to be able to load tile sets from files. just create arrays of ints to specify offsets into the sprite array
-// signifying which tile to use. Can add header to specify which tile set to use, allows changing tiles for same set.
+// Boundary images in this order.
+// int Boundaries[16] {
+// 	0, // No boundary
+// 	1, // bot left
+// 	2, // bot right
+// 	3, // bot
+// 	4, // top right
+// 	5, // top right, bottom left
+// 	6, // right
+// 	7, // all but top left
+// 	8, // top left
+// 	9, // left
+// 	10,// top left, bottom right
+// 	11,// all but top right
+// 	12,// top
+// 	13,// all but bottom right
+// 	14,// all but bottom left
+// 	15,// all						// INVALID (I don't have a tile for this case)
+// }
+
 class TileMap {
-	enum TileType {
+	enum TileType : unsigned char {
 		Water,
+
 		Grass,
+		GrassBL,
+		GrassBR,
+		GrassB,
+		GrassTR,
+		GrassTRBL,
+		GrassR,
+		GrassABTL,
+		GrassTL,
+		GrassL,
+		GrassTLBR,
+		GrassABTR,
+		GrassT,
+		GrassABBR,
+		GrassABBL,
+		GrassInvalid,
+
 		Path,
+		PathBL,
+		PathBR,
+		PathB,
+		PathTR,
+		PathTRBL,
+		PathR,
+		PathABTL,
+		PathTL,
+		PathL,
+		PathTLBR,
+		PathABTR,
+		PathT,
+		PathABBR,
+		PathABBL,
+		PathInvalid,
+
+		Sand,
+		SandBL,
+		SandBR,
+		SandB,
+		SandTR,
+		SandTRBL,
+		SandR,
+		SandABTL,
+		SandTL,
+		SandL,
+		SandTLBR,
+		SandABTR,
+		SandT,
+		SandABBR,
+		SandABBL,
+		SandInvalid,
 
 		TILE_TYPE_COUNT,
 	};
 
 public:
-	void Init(Game* game, std::string level_path);
-	void Update(Game* game);
+	void Init(Game* game, const std::string& level_path);
+	void Update(const Game* game);
 	void Draw(Game* game);
 
-	static constexpr int map_size = 10000;
-	static constexpr int map_width = 100;
+	[[nodiscard]] int GetIndex(int x, int y) const;
+
+	static constexpr int map_size = 2000;
 	int tile_size = 32;
 
 	unsigned int tiles_in_use = 0;
@@ -42,9 +110,9 @@ public:
 	int tilemap_width;
 	int tilemap_height;
 	Sprite** tilemap;
-	bool* collidable;
+	bool* has_collision;
 
 	// Store all blockable tiles here to reduce checks.
 	int collision_data_count;
-	CollisionData collision_data[5000]; // Set to initial size big enough that if the entire screen is collidable tiles we dont go out of bounds.
+	CollisionData collision_data[map_size]; // Set to initial size big enough that if the entire screen is has_collision tiles we dont go out of bounds.
 };

@@ -1,4 +1,7 @@
+#include "Level.h"
 #include "Game.h"
+#include "AssetFilePaths.h"
+
 #include <cassert>
 
 #include "MainMenuLevel.h"
@@ -11,25 +14,23 @@ void Game::Init() {
 	// Set a random seed at the start of the game.
 	srand(static_cast<int>(time(nullptr)));
 
-	constexpr int WINDOW_WIDTH = 1200;
-	constexpr int WINDOW_HEIGHT = 800;
-	window.create(WINDOW_WIDTH, WINDOW_HEIGHT, "Game");
-	window_width = window.getWidth();
-	window_height = window.getHeight();
+	window_width = 1200;
+	window_height = 800;
+	window.create(window_width, window_height, "Game");
 
 	// Needs to be after we create window.
 	LoadAssets();
 
-	// Never gets freed but doesnt matter as when the game quits the program does as well.
-	depth_buffer = static_cast<int*>(malloc(sizeof(int) * WINDOW_WIDTH * WINDOW_HEIGHT));
+	// Never gets freed but doesn't matter as when the game quits the program does as well.
+	depth_buffer = static_cast<int*>(malloc(sizeof(int) * window_width * window_height));
 
-	font32.Init(&images[Font32Pt], 32, 32, 8);
-	font16.Init(&images[Font16Pt], 16, 16, 8);
+	font32.Init(Font32Pt, 32, 32, 8);
+	font16.Init(Font16Pt, 16, 16, 8);
+
+	camera.Init();
 
 	running = true;
 	timer.reset();
-
-	camera.Init();
 
 	// Set Main Menu as the starting level.
 	active_level_ = new MainMenuLevel;
@@ -67,8 +68,7 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	// Once we have a background we should be able to ignore clearing, as all the pixels will
-	// get over drawn anyway.
+	// We draw all the pixels on every frame, so this shouldn't be necessary.
 	window.clear();
 
 	// Clear Depth
@@ -82,217 +82,71 @@ void Game::Render() {
 	window.present();
 }
 
-// Need to find better way to do this, this is very prone to error especially once we get to large numbers of resources.
-static constexpr char const* GAME_IMAGE_PATH[GAME_IMAGE_COUNT] = {
-	"resources/MainMenuHeader.png",
-	"resources/ButtonBG.png",
-	"resources/PopupMenuBG.png",
-
-	"resources/PlayerIdle1.png",
-	"resources/PlayerIdle2.png",
-	"resources/PlayerIdle3.png",
-	"resources/PlayerIdle4.png",
-	"resources/PlayerIdle5.png",
-	"resources/PlayerIdle6.png",
-	"resources/PlayerIdle7.png",
-
-	"resources/PlayerWalk1.png",
-	"resources/PlayerWalk2.png",
-	"resources/PlayerWalk3.png",
-	"resources/PlayerWalk4.png",
-	"resources/PlayerWalk5.png",
-	"resources/PlayerWalk6.png",
-	"resources/PlayerWalk7.png",
-	"resources/PlayerWalk8.png",
-	"resources/PlayerWalk9.png",
-
-	"resources/PlayerDeath1.png",
-	"resources/PlayerDeath2.png",
-	"resources/PlayerDeath3.png",
-	"resources/PlayerDeath4.png",
-	"resources/PlayerDeath5.png",
-	"resources/PlayerDeath6.png",
-	"resources/PlayerDeath7.png",
-	"resources/PlayerDeath8.png",
-	"resources/PlayerDeath9.png",
-	"resources/PlayerDeath10.png",
-	"resources/PlayerDeath11.png",
-	"resources/PlayerDeath12.png",
-	"resources/PlayerDeath13.png",
-	"resources/PlayerDeath14.png",
-	"resources/PlayerDeath15.png",
-	"resources/PlayerDeath16.png",
-	"resources/PlayerDeath17.png",
-	"resources/PlayerDeath18.png",
-
-	"resources/SwordsmanWalk1.png",
-	"resources/SwordsmanWalk2.png",
-	"resources/SwordsmanWalk3.png",
-	"resources/SwordsmanWalk4.png",
-	"resources/SwordsmanWalk5.png",
-	"resources/SwordsmanWalk6.png",
-	"resources/SwordsmanWalk7.png",
-	"resources/SwordsmanWalk8.png",
-	"resources/SwordsmanWalk9.png",
-	"resources/SwordsmanWalk10.png",
-
-	"resources/SwordsmanAttack1.png",
-	"resources/SwordsmanAttack2.png",
-	"resources/SwordsmanAttack3.png",
-	"resources/SwordsmanAttack4.png",
-	"resources/SwordsmanAttack5.png",
-	"resources/SwordsmanAttack6.png",
-	"resources/SwordsmanAttack7.png",
-	"resources/SwordsmanAttack8.png",
-	"resources/SwordsmanAttack9.png",
-	"resources/SwordsmanAttack10.png",
-	"resources/SwordsmanAttack11.png",
-	"resources/SwordsmanAttack12.png",
-	"resources/SwordsmanAttack13.png",
-	"resources/SwordsmanAttack14.png",
-	"resources/SwordsmanAttack15.png",
-
-	"resources/SwordsmanDeath1.png",
-	"resources/SwordsmanDeath2.png",
-	"resources/SwordsmanDeath3.png",
-	"resources/SwordsmanDeath4.png",
-	"resources/SwordsmanDeath5.png",
-	"resources/SwordsmanDeath6.png",
-	"resources/SwordsmanDeath7.png",
-	"resources/SwordsmanDeath8.png",
-	"resources/SwordsmanDeath9.png",
-	"resources/SwordsmanDeath10.png",
-
-	"resources/ArcherWalk1.png",
-	"resources/ArcherWalk2.png",
-	"resources/ArcherWalk3.png",
-	"resources/ArcherWalk4.png",
-	"resources/ArcherWalk5.png",
-	"resources/ArcherWalk6.png",
-	"resources/ArcherWalk7.png",
-	"resources/ArcherWalk8.png",
-	"resources/ArcherWalk9.png",
-	"resources/ArcherWalk10.png",
-
-	"resources/ArcherAttack1.png",
-	"resources/ArcherAttack2.png",
-	"resources/ArcherAttack3.png",
-	"resources/ArcherAttack4.png",
-	"resources/ArcherAttack5.png",
-	"resources/ArcherAttack6.png",
-	"resources/ArcherAttack7.png",
-	"resources/ArcherAttack8.png",
-
-	"resources/ArcherDeath1.png",
-	"resources/ArcherDeath2.png",
-	"resources/ArcherDeath3.png",
-	"resources/ArcherDeath4.png",
-	"resources/ArcherDeath5.png",
-	"resources/ArcherDeath6.png",
-	"resources/ArcherDeath7.png",
-	"resources/ArcherDeath8.png",
-	"resources/ArcherDeath9.png",
-	"resources/ArcherDeath10.png",
-	"resources/ArcherDeath11.png",
-	"resources/ArcherDeath12.png",
-
-	"resources/ArcherArrow1.png",
-	"resources/ArcherArrow2.png",
-	"resources/ArcherArrow3.png",
-	"resources/ArcherArrow4.png",
-
-	"resources/TurretIdle1.png",
-	"resources/TurretIdle2.png",
-	"resources/TurretIdle3.png",
-
-	"resources/TurretAttack1.png",
-	"resources/TurretAttack2.png",
-	"resources/TurretAttack3.png",
-	"resources/TurretAttack4.png",
-	"resources/TurretAttack5.png",
-
-	"resources/TurretDeath1.png",
-	"resources/TurretDeath2.png",
-	"resources/TurretDeath3.png",
-	"resources/TurretDeath4.png",
-	"resources/TurretDeath5.png",
-	"resources/TurretDeath6.png",
-	"resources/TurretDeath7.png",
-	"resources/TurretDeath8.png",
-
-	"resources/BomberWalk1.png",
-	"resources/BomberWalk2.png",
-	"resources/BomberWalk3.png",
-	"resources/BomberWalk4.png",
-	"resources/BomberWalk5.png",
-	"resources/BomberWalk6.png",
-	"resources/BomberWalk7.png",
-	"resources/BomberWalk8.png",
-	"resources/BomberWalk9.png",
-	"resources/BomberWalk10.png",
-
-	"resources/BomberAttack1.png",
-	"resources/BomberAttack2.png",
-	"resources/BomberAttack3.png",
-	"resources/BomberAttack4.png",
-	"resources/BomberAttack5.png",
-	"resources/BomberAttack6.png",
-
-	"resources/BomberDeath1.png",
-	"resources/BomberDeath2.png",
-	"resources/BomberDeath3.png",
-	"resources/BomberDeath4.png",
-	"resources/BomberDeath5.png",
-	"resources/BomberDeath6.png",
-	"resources/BomberDeath7.png",
-	"resources/BomberDeath8.png",
-	"resources/BomberDeath9.png",
-	"resources/BomberDeath10.png",
-	"resources/BomberDeath11.png",
-	"resources/BomberDeath12.png",
-
-	"resources/ItemBorder.png",
-
-	"resources/AOEWeapon.png",
-
-	"resources/SwordThrow1.png",
-	"resources/SwordThrow2.png",
-	"resources/SwordThrow3.png",
-	"resources/SwordThrow4.png",
-	"resources/SwordThrow5.png",
-	"resources/SwordThrow6.png",
-	"resources/SwordThrow7.png",
-	"resources/SwordThrow8.png",
-
-	"resources/Water1.png",
-	"resources/Water2.png",
-	"resources/Water3.png",
-	"resources/Water4.png",
-	"resources/Water5.png",
-	"resources/Water6.png",
-	"resources/Water7.png",
-	"resources/Water8.png",
-
-	"resources/Grass1.png",
-
-	"resources/Path1.png",
-
-	"resources/MonoFont32pt.png",
-	"resources/MonoFont16pt.png",
-};
-
 void Game::LoadAssets() {
-	// TODO: CHECK IF ASSET EXISTS -> IF NOT JUST LOAD A BASE ONE WHICH IS CLEAR THAT IT'S NOT LOADED.
+	// NOTE: Does not check if files exist, the load function crashes the program if it doesn't exist.
 	for (int i = 0; i < GAME_IMAGE_COUNT; i++) {
-		if (!images[i].load(GAME_IMAGE_PATH[i])) std::cout << "ERROR LOADING FILE\n";
+		if (!images[i].load(game_image_path[i])) std::cout << "ERROR LOADING FILE\n";
+	}
+}
+
+void Game::DrawRect(const Vec2& position, const Vec2& size, const int depth, const unsigned char r, const unsigned char g, const unsigned char b) {
+	const auto [cam_x, cam_y] = camera.position;
+
+	// Want to round the position so movement is smoothed between pixels (I don't know if this actually has any effect).
+	const int round_x = static_cast<int>(round(position.x));
+	const int round_y = static_cast<int>(round(position.y));
+
+	// The world position from screen 0, 0 -> w, h
+	// This can be calculated once and cached before all our draw calls
+	const int world_x_start = static_cast<int>(cam_x) - (static_cast<int>(window_width) / 2);
+	const int world_x_end = world_x_start + static_cast<int>(window_width);
+	const int world_y_start = static_cast<int>(cam_y) - (static_cast<int>(window_height) / 2);
+	const int world_y_end = world_y_start + static_cast<int>(window_height);
+
+	const int image_width = static_cast<int>(size.x);
+	const int image_height = static_cast<int>(size.y);
+
+	// start and end from 0 -> window_width
+	const int image_visible_offset_x_start = max(round_x, world_x_start) - world_x_start;
+	const int image_visible_offset_x_end = min(round_x + image_width, world_x_end) - world_x_start;
+
+	const int image_visible_offset_y_start = max(round_y, world_y_start) - world_y_start;
+	const int image_visible_offset_y_end = min(round_y + image_height, world_y_end) - world_y_start;
+
+	for (int y = image_visible_offset_y_start; y < image_visible_offset_y_end; y++) {
+		for (int x = image_visible_offset_x_start; x < image_visible_offset_x_end; x++) {
+
+			// If something is already drawn closer than this, skip.
+			if (depth >= depth_buffer[(y * window_width) + x]) continue;
+
+			// Else draw and update depth buffer.
+			window.draw(x, y, r, g, b);
+			depth_buffer[(y * window_width) + x] = depth;
+		}
+	}
+}
+
+void Game::DrawRectScreenSpace(const Vec2& position, const Vec2& size, int depth, unsigned char r, unsigned char g, unsigned char b) {
+	for (int y = 0; y < static_cast<int>(size.y); y++) {
+		const int screen_y_pos = static_cast<int>(position.y) + y;
+		if (screen_y_pos < 0 or screen_y_pos > static_cast<int>(window_height)) continue;
+		for (int x = 0; x < static_cast<int>(size.x); x++) {
+			const int screen_x_pos = static_cast<int>(position.x) + x;
+			if (screen_x_pos < 0 or screen_x_pos > static_cast<int>(window_width)) continue;
+
+			if (depth >= depth_buffer[(screen_y_pos * window_width) + screen_x_pos]) continue;
+
+			window.draw(screen_x_pos, screen_y_pos, r, g, b);
+			depth_buffer[(screen_y_pos * window_width) + screen_x_pos] = depth;
+		}
 	}
 }
 
 void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
-	const GamesEngineeringBase::Image* image = sprite.GetImage();
+	const GamesEngineeringBase::Image* image = &images[sprite.GetImage()];
 	if (!image) return;
 
-	const Vec2 camera_pos = camera.position;
+	const auto [cam_x, cam_y] = camera.position;
 
 	// Want to round the position so movement is smoothed between pixels (I dont know if this actually has any effect).
 	const int round_x = static_cast<int>(round(position.x));
@@ -300,9 +154,9 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
 
 	// The world position from screen 0, 0 -> w, h
 	// This can be calculated once and cached before all our draw calls
-	const int world_x_start = static_cast<int>(camera_pos.x) - (static_cast<int>(window_width) / 2);
+	const int world_x_start = static_cast<int>(cam_x) - (static_cast<int>(window_width) / 2);
 	const int world_x_end = world_x_start + static_cast<int>(window_width);
-	const int world_y_start = static_cast<int>(camera_pos.y) - (static_cast<int>(window_height) / 2);
+	const int world_y_start = static_cast<int>(cam_y) - (static_cast<int>(window_height) / 2);
 	const int world_y_end = world_y_start + static_cast<int>(window_height);
 
 	const int image_x_start = sprite.x_offset[0];
@@ -324,21 +178,32 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
 	const int image_y_offset = image_visible_offset_y_start - (round_y - world_y_start);
 	int image_y = image_y_start + image_y_offset;
 
+	int sign = +1;
+	int image_x_starting_value = image_x_start + image_x_offset - 1;
+
+	if (sprite.flip) {
+		sign = -1;
+		image_x_starting_value = image_x_end;
+	}
+
+	const unsigned char* image_data = image->data;
+
 	for (int y = image_visible_offset_y_start; y < image_visible_offset_y_end; y++) {
-		int image_x = image_x_start + image_x_offset - 1; // Start at - 1 so we can increment at start of loop.
-		if (sprite.flip) image_x = image_x_end;
+		int image_x = image_x_starting_value;
 		for (int x = image_visible_offset_x_start; x < image_visible_offset_x_end; x++) {
-			if (sprite.flip) image_x--;
-			else image_x++;
+			image_x += sign;
 
 			// If alpha 0, skip
-			if (image->alphaAtUnchecked(image_x, image_y) == 0) continue;
+			// I'm not calling alphaAtUnchecked because it's doing an extra if for channel size, but I assume channels is always 4.
+			const unsigned char alpha = image_data[(((image_y * image->width) + image_x) * 4) + 3];
+			//const unsigned char alpha = image->alphaAtUnchecked(image_x, image_y);
+			if (alpha == 0) continue;
 
-			// If something is already drawn closer than this, skip.
+			//// If something is already drawn closer than this, skip.
 			if (sprite.depth >= depth_buffer[(y * window_width) + x]) continue;
 
-			// Else draw and update depth buffer.
-			const unsigned char* image_colour = image->atUnchecked(image_x, image_y);
+			//// Else draw and update depth buffer.
+			const unsigned char* image_colour = &image_data[((image_y * image->width) + image_x) * 4];
 
 			unsigned char final_colour[3] = {
 				static_cast<unsigned char>((sprite.modulation_colour[0] * image_colour[0]) / 255),
@@ -346,14 +211,26 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position) {
 				static_cast<unsigned char>((sprite.modulation_colour[2] * image_colour[2]) / 255),
 			};
 
+			//// If transparent, blend colour with what currently in the colour buffer. This relies on correct ordering.
+			if (alpha < 255)
+			{
+				const unsigned char* current_screen_colour = &window.backBuffer()[static_cast<size_t>((x + (y * window_width)) * 3)];
+
+				const float alpha_as_percentage = static_cast<float>(alpha) / 255.0f;
+
+				final_colour[0] = static_cast<unsigned char>(static_cast<float>(final_colour[0]) * alpha_as_percentage) + static_cast<unsigned char>(static_cast<float>(current_screen_colour[0]) * (1.0f - alpha_as_percentage));
+				final_colour[1] = static_cast<unsigned char>(static_cast<float>(final_colour[1]) * alpha_as_percentage) + static_cast<unsigned char>(static_cast<float>(current_screen_colour[1]) * (1.0f - alpha_as_percentage));
+				final_colour[2] = static_cast<unsigned char>(static_cast<float>(final_colour[2]) * alpha_as_percentage) + static_cast<unsigned char>(static_cast<float>(current_screen_colour[2]) * (1.0f - alpha_as_percentage));
+			}
+
 			window.draw(x, y, &final_colour[0]);
-			depth_buffer[(y * 1200) + x] = sprite.depth;
+			depth_buffer[(y * window_width) + x] = sprite.depth;
 		}
 		image_y++;
 	}
 }
 
-static Vec2 RotateVec2(Vec2& vec, const float angle)
+static Vec2 RotateVec2(const Vec2& vec, const float angle)
 {
 	Vec2 rotation_matrix[2] = {
 		{
@@ -365,8 +242,8 @@ static Vec2 RotateVec2(Vec2& vec, const float angle)
 	};
 
 	const Vec2 res = {
-		rotation_matrix[0][0] * vec[0] + rotation_matrix[0][1] * vec[1],
-		rotation_matrix[1][0] * vec[0] + rotation_matrix[1][1] * vec[1]
+		rotation_matrix[0][0] * vec.x + rotation_matrix[0][1] * vec.y,
+		rotation_matrix[1][0] * vec.x + rotation_matrix[1][1] * vec.y
 	};
 
 	return res;
@@ -378,10 +255,10 @@ static Vec2 RotateVec2(Vec2& vec, const float angle)
 // Check bounds as easy.
 void Game::DrawSprite(const Sprite& sprite, const Vec2& position, const float rotation, const Vec2& around)
 {
-	const GamesEngineeringBase::Image* image = sprite.GetImage();
+	const GamesEngineeringBase::Image* image = &images[sprite.GetImage()];
 	if (!image) return;
 
-	const Vec2 camera_pos = camera.position;
+	const auto [cam_x, cam_y] = camera.position;
 
 	// Want to round the position so movement is smoothed between pixels (I don't know if this actually has any effect).
 	const int round_x = static_cast<int>(round(position.x));
@@ -389,10 +266,8 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position, const float ro
 
 	// The world position from screen 0, 0 -> w, h
 	// This can be calculated once and cached before all our draw calls
-	const int world_x_start = static_cast<int>(camera_pos.x) - (static_cast<int>(window_width) / 2);
-	const int world_x_end = world_x_start + static_cast<int>(window_width);
-	const int world_y_start = static_cast<int>(camera_pos.y) - (static_cast<int>(window_height) / 2);
-	const int world_y_end = world_y_start + static_cast<int>(window_height);
+	const int world_x_start = static_cast<int>(cam_x) - (static_cast<int>(window_width) / 2);
+	const int world_y_start = static_cast<int>(cam_y) - (static_cast<int>(window_height) / 2);
 
 	const int image_x_start = sprite.x_offset[0];
 	const int image_x_end = sprite.x_offset[1] == -1 ? static_cast<int>(image->width) : sprite.x_offset[1];
@@ -432,31 +307,39 @@ void Game::DrawSprite(const Sprite& sprite, const Vec2& position, const float ro
 				static_cast<unsigned char>((sprite.modulation_colour[2] * image_colour[2]) / 255),
 			};
 
-			Vec2 screen_position_vec = Vec2(float(x), float(y)) - (Vec2{ float(image_visible_offset_x_start), float(image_visible_offset_y_start)}) - around;
-			Vec2 rotated_pos = RotateVec2(screen_position_vec, rotation) + (Vec2{ float(image_visible_offset_x_start), float(image_visible_offset_y_start) }) + around;
+			// Need to offset by rotation point.
+			Vec2 screen_position_vec = Vec2{ static_cast<float>(x), static_cast<float>(y) };
+			screen_position_vec = screen_position_vec - (Vec2{ static_cast<float>(image_visible_offset_x_start), static_cast<float>(image_visible_offset_y_start) });
+			screen_position_vec = screen_position_vec - around;
 
-			if (rotated_pos.x < 0 or rotated_pos.x >= window_width) continue;
-			if (rotated_pos.y < 0 or rotated_pos.y >= window_height) continue;
+			// Then move back after rotation.
+			Vec2 rotated_pos = RotateVec2(screen_position_vec, rotation);
+			rotated_pos = rotated_pos + (Vec2{ static_cast<float>(image_visible_offset_x_start), static_cast<float>(image_visible_offset_y_start) });
+			rotated_pos = rotated_pos + around;
+
+			const int rotated_pos_x = static_cast<int>(rotated_pos.x);
+			const int rotated_pos_y = static_cast<int>(rotated_pos.y);
+
+			if (rotated_pos_x < 0 or rotated_pos_x >= static_cast<int>(window_width)) continue;
+			if (rotated_pos_y < 0 or rotated_pos_y >= static_cast<int>(window_height)) continue;
 
 			// If something is already drawn closer than this, skip.
-			if (sprite.depth >= depth_buffer[(int(rotated_pos.y) * window_width) + int(rotated_pos.x)]) continue;
+			if (sprite.depth >= depth_buffer[(rotated_pos_y * window_width) + rotated_pos_x]) continue;
 
-			window.draw(int(rotated_pos.x), int(rotated_pos.y), &final_colour[0]);
-			depth_buffer[(int(rotated_pos.y) * 1200) + int(rotated_pos.x)] = sprite.depth;
+			window.draw(rotated_pos_x, rotated_pos_y, &final_colour[0]);
+			depth_buffer[(rotated_pos_y * window_width) + rotated_pos_x] = sprite.depth;
 		}
 		image_y++;
 	}
 }
 
 void Game::DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position) {
-	const GamesEngineeringBase::Image* image = sprite.GetImage();
+	const GamesEngineeringBase::Image* image = &images[sprite.GetImage()];
 	if (!image) return;
 
-	const Vec2 camera_pos = camera.position;
-
 	// Want to round the position so movement is smoothed between pixels (I don't know if this actually has any effect).
-	int round_x = static_cast<int>(round(position.x));
-	int round_y = static_cast<int>(round(position.y));
+	const int round_x = static_cast<int>(round(position.x));
+	const int round_y = static_cast<int>(round(position.y));
 
 	const int image_x_start = sprite.x_offset[0];
 	const int image_x_end = sprite.x_offset[1] == -1 ? static_cast<int>(image->width) : sprite.x_offset[1];
@@ -468,10 +351,10 @@ void Game::DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position) {
 
 	// start and end from 0 -> window_width
 	const int image_visible_offset_x_start = max(round_x, 0);
-	const int image_visible_offset_x_end = min(round_x + image_width, window_width);
+	const int image_visible_offset_x_end = min(round_x + image_width, static_cast<int>(window_width));
 
 	const int image_visible_offset_y_start = max(round_y, 0);
-	const int image_visible_offset_y_end = min(round_y + image_height, window_height);
+	const int image_visible_offset_y_end = min(round_y + image_height, static_cast<int>(window_height));
 
 	int image_y = image_y_start;
 	for (int y = image_visible_offset_y_start; y < image_visible_offset_y_end; y++) {
@@ -497,7 +380,7 @@ void Game::DrawSpriteScreenSpace(const Sprite& sprite, const Vec2& position) {
 			};
 
 			window.draw(x, y, &final_colour[0]);
-			depth_buffer[(y * 1200) + x] = sprite.depth;
+			depth_buffer[(y * window_width) + x] = sprite.depth;
 		}
 		image_y++;
 	}

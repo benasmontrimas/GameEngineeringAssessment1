@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CustomBase.h"
+#include "Vec2.h"
 #include "Sprite.h"
 #include "Collider.h"
 
@@ -10,8 +10,8 @@ class Projectile {
 public:
     void Init(Game* game);
     void Shoot(Game* game, const Vec2& start_position, const Vec2& projectile_direction, float projectile_speed, float projectile_life_time);
-    void Update(Game* game);
-    void Draw(Game* game);
+    void Update(const Game* game);
+    void Draw(Game* game) const;
 
 public:
     Collider collider;

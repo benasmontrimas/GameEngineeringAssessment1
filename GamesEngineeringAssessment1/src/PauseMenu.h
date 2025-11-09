@@ -13,6 +13,9 @@ public:
 	[[nodiscard]] bool IsContinue() const;
 
 private:
+	static void SaveLevel(const Game* game);
+
+private:
 	Sprite background_{};
 	Button continue_button_;
 	Button save_button_;

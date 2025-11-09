@@ -1,8 +1,9 @@
 #pragma once
 
 #include <string>
-#include "CustomBase.h"
+#include "Vec2.h"
 #include "Sprite.h"
+#include "GameImages.h"
 
 class Game;
 
@@ -12,11 +13,11 @@ namespace GamesEngineeringBase {
 
 class FontMap {
 public:
-	void Init(GamesEngineeringBase::Image* image, int w, int h, int _chars_per_line);
+	void Init(GameImages img, int w, int h, int chars_per_row);
 	void DrawString(Game* game, const std::string& string, const Vec2& position);
 
 public:
-	GamesEngineeringBase::Image* image{};
+	GameImages image{};
 
 	Sprite char_sprite{};
 

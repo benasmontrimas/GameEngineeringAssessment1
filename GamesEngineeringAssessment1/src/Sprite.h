@@ -1,28 +1,28 @@
 #pragma once
-#include "GamesEngineeringBase.h"
+#include "GameImages.h"
 
 class Game;
 
 class Sprite {
 public:
 	void Init(int count);
-	void Deinit();
 	void Update(const Game* game);
 
 	void Reset();
 
-	[[nodiscard]] GamesEngineeringBase::Image* GetImage() const;
+	[[nodiscard]] GameImages GetImage() const;
 
 	int image_count{};
 	// Does this need to be a pointer to pointer? I guess if we have non-consecutive
 	// images, then yes, but if all are consecutive, then we can just
 	// Point into the original array and specify the stretch.
-	GamesEngineeringBase::Image** images{ nullptr };
+	// NOTE: Needs to be manually saved/loaded.
+	GameImages images[18];
 	int depth{};
 
 	int current_frame{};
 	float current_frame_duration{0};
-	float animation_framerate{};
+	float animation_frame_rate{};
 
 	unsigned char modulation_colour[3]{ 255, 255, 255 }; // Use to alter final colour.
 

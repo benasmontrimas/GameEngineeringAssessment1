@@ -9,7 +9,7 @@ class EndGameMenu
 public:
 	void Init(Game* game);
 	void Update(Game* game);
-	void Draw(Game* game);
+	void Draw(Game* game) const;
 
 public:
 	int final_score;
@@ -19,5 +19,5 @@ private:
 	Sprite background_{};
 
 	Button restart_button_;
-	Button continue_button_;
+	Button main_menu_button_;
 };

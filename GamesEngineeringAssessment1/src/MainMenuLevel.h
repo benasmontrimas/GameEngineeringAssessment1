@@ -3,20 +3,28 @@
 #include "Level.h"
 #include "Sprite.h"
 #include "Map.h"
+#include "GameLevel.h"
 
 class MainMenuLevel : public Level {
 public:
 	void Init(Game* game) override;
 	void Update(Game* game) override;
 	void Draw(Game* game) override;
-	void Shutdown(Game* game) override;
 
 private:
-	TileMap bg_;
+	static void LoadLevel(Game* game);
+
+public:
+	GameDifficulty difficulty{ Easy };
+
+private:
+	TileMap bg_{};
 	Sprite header_{};
 
-	// TODO: Need a button class... This will get messy otherwise.
-	Button play_button_;
-	Button settings_button_;
+	Button load_button_;
+	Button play_infinite_button_;
+	Button play_fixed_button_;
+	Button difficulty_button_;
 	Button quit_button_;
+
 };

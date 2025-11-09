@@ -8,11 +8,12 @@ class Game;
 class HUD {
 public:
 	void Init(Game* game);
-	void Update(Game* game);
+	void Update(const Game* game);
 	void Draw(Game* game, float elapsed_seconds) const;
 
-	Sprite weapon_1_border{};
-	Sprite weapon_1_icon{};
+	Sprite sword_border{};
+	Sprite sword_icon{};
 
-	Sprite weapon_2_border{};
+	Sprite aoe_border{};
+	Sprite aoe_icon{};
 };

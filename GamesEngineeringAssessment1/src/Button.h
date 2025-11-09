@@ -2,18 +2,18 @@
 #include "Sprite.h"
 #include <string>
 
-#include "CustomBase.h"
+#include "Vec2.h"
 
 class Game;
 
 class Button {
 public:
-	void Init(Game* game, const std::string& text);
+	void Init(Game* game);
 	void Update(const Game* game);
-	void Draw(Game* game) const;
+	void Draw(Game* game, const std::string& text) const;
 
 	// Returns true if the button was pressed this frame.
-	bool IsPressed() const;
+	[[nodiscard]] bool IsPressed() const;
 
 public:
 	static constexpr unsigned int width = 200;
@@ -23,7 +23,6 @@ public:
 
 private:
 	Sprite background_{};
-	std::string text_;
 
 	bool is_hovered_{ false };
 	bool is_pressed_{ false };

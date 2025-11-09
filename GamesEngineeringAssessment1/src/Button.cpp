@@ -1,11 +1,9 @@
 #include "Button.h"
 #include "Game.h"
 
-void Button::Init(Game* game, const std::string& text) {
-	text_ = text;
-
+void Button::Init(Game* game) {
 	background_.Init(1);
-	background_.images[0] = &game->images[ButtonBG];
+	background_.images[0] = ButtonBG;
 	background_.depth = INT_MIN + 1;
 }
 
@@ -38,10 +36,10 @@ void Button::Update(const Game* game)
 	}
 }
 
-void Button::Draw(Game* game) const
+void Button::Draw(Game* game, const std::string& text) const
 {
 	game->DrawSpriteScreenSpace(background_, position);
-	game->font32.DrawString(game, text_, position + Vec2{10.0f, 10.0f});
+	game->font32.DrawString(game, text, position + Vec2{10.0f, 10.0f});
 }
 
 bool Button::IsPressed() const

@@ -6,68 +6,69 @@
 void Player::Init(Game* game) {
 	sprite.Init(7);
 	for (int i = 0; i < 7; i++) {
-		sprite.images[i] = &game->images[PlayerIdle1 + i];
+		sprite.images[i] = static_cast<GameImages>(PlayerIdle1 + i);
 	}
-	sprite.animation_framerate = 10;
+	sprite.animation_frame_rate = 10;
 
 	walking_sprite.Init(9);
 	for (int i = 0; i < 9; i++) {
-		walking_sprite.images[i] = &game->images[PlayerWalk1 + i];
+		walking_sprite.images[i] = static_cast<GameImages>(PlayerWalk1 + i);
 	}
-	walking_sprite.animation_framerate = 10;
+	walking_sprite.animation_frame_rate = 10;
 
 	dying_sprite.Init(18);
 	for (int i = 0; i < 18; i++) {
-		dying_sprite.images[0] = &game->images[PlayerDeath1 + i];
+		dying_sprite.images[i] = static_cast<GameImages>(PlayerDeath1 + i);
 	}
-	dying_sprite.animation_framerate = 18; // Play over 1 second
-
-	// Need to make the dying sprite. Don't have any images for it yet.
+	dying_sprite.animation_frame_rate = 9;
 
 	collider.radius = 14.0f;
 
-	weapons[0] = new Sword;
-	weapons[0]->Init(game);
+	sword.Init(game);
+	aoe.Init(game);
 
 	current_health = max_health;
 	time_dying = 0;
 }
 
 void Player::Update(Game* game) {
-	if (state != State::Dying) { // already have a switch but i dont want repeat this loop.
-		for (int i = 0; i < 2; i++) {
-			if (weapons[i]) weapons[i]->Update(game);
-		}
+	power_up_time_left -= game->game_time;
+	power_up_time_left = max(power_up_time_left, 0);
+
+	if (state != State::Dying and state != State::Dead) {
+		sword.Update(game);
+		aoe.Update(game);
 	}
 
 	switch (state) {
 	case State::Idle:
 		sprite.Update(game);
-		sprite.depth = -position.y;
+		sprite.depth = -static_cast<int>(position.y);
 		HandleInput(game);
 		break;
 	case State::Walking:
 		walking_sprite.Update(game);
-		walking_sprite.depth = -position.y;
+		walking_sprite.depth = -static_cast<int>(position.y);
 		HandleInput(game);
 		break;
 	case State::Dying:
 		dying_sprite.Update(game);
 		time_dying += game->game_time;
-		if (time_dying > 1.0f) {
-			state = State::Dead;
+		if (time_dying > 2.0f) {
+			SetState(State::Dead);
 		}
-		break;
+		return;
+	default: ;
 	}
 
 	collider.center = position + Vec2{24, 48}; // Offset collider to be slightly lower than center.
 
 	// Check collisions with all enemies
-	GameLevel* level = (GameLevel*)game->GetLevel();
-	Enemy* enemies = level->enemies;
-	unsigned int enemies_alive = level->enemies_alive;
+	GameLevel* level = dynamic_cast<GameLevel*>(game->GetLevel());
+	const Enemy* enemies = level->enemies;
+	const unsigned int enemies_alive = level->enemies_alive;
 
-	// Check collision cooldown, dont want player taking collision damage every frame...
+	// Check collision cooldown, don't want player taking collision damage every frame...
 	time_since_last_collision += game->game_time;
 	if (time_since_last_collision >= collision_cooldown) {
 		// Just to prevent the game going too long and the time since last overflowing or something
@@ -79,22 +80,35 @@ void Player::Update(Game* game) {
 			if (collider.CheckCollision(enemies[i].collider)) {
 				Hit(10); // Take flat damage from colliding, enemies also attack so...
 				time_since_last_collision = 0.0f;
-				break; // Dont need to check rest, as we set collision cooldown.
+				break; // Don't need to check rest, as we set collision cooldown.
 			}
 		}
 	}
 
-	// Check collision with tiles
-	// If we collide along the x we just set movemnt direciton to 0. and so on.
-	// This is more complicated than it has to be because our tiles dont actually have positions... just the map does.
-	// Need to do the same calculation we use when we draw for this. This could be made a lot easier.
+	// Check collision with power ups
+	PowerUp* power_ups = level->power_ups;
+	const int active_power_ups = level->active_power_ups;
 
+	for (int i = 0; i < active_power_ups; i++) {
+		if (collider.CheckCollision(power_ups[i].collider)) {
+			power_up_time_left = 10.0f;
+			power_ups[i].is_expired = true;
+		}
+	}
+
+	// Check collision with tiles
 	if (movement_direction != Vec2{ 0, 0 }) {
+		// Move first then check collision
+		const Vec2 movement_vector = NormalizeVec2(movement_direction) * movement_speed * game->game_time;
+		last_position = position;
+		position = position + movement_vector;
+		SetState(State::Walking);
+
 		// Only need to check collisions if were moving.
 		const TileMap& level_map = level->level_map;
 		const CollisionData* collision_data = &level_map.collision_data[0];
-		int collision_data_count = level_map.collision_data_count;
-		float tile_size = static_cast<float>(level_map.tile_size);
+		const int collision_data_count = level_map.collision_data_count;
+		const float tile_size = static_cast<float>(level_map.tile_size);
 
 		bool collided = false;
 		Vec2 deciding_collision{0, 0};
@@ -104,9 +118,6 @@ void Player::Update(Game* game) {
 			Vec2 collision_direction = collider.CheckCollisionSquare(pos, tile_size);
 			if (collision_direction == Vec2{0, 0}) continue;
 			collided = true;
-			Vec2 perpendiculat_to_collision = Vec2{-collision_direction.y, collision_direction.x};
-
-			std::cout << collision_direction.x << ":" << collision_direction.y << "\n";
 
 			if (abs(deciding_collision.x) < abs(collision_direction.x)) {
 				deciding_collision.x = collision_direction.x;
@@ -129,28 +140,22 @@ void Player::Update(Game* game) {
 				movement_direction.y = min(movement_direction.y, 0);
 			}
 
-			position = last_position; // Move back to where we were before the collision.
+			position = position - NormalizeVec2(deciding_collision) * movement_speed * game->game_time;
 			collider.center = position;
 		}
 
 		if (movement_direction == Vec2{ 0, 0 }) return;
-
-		Vec2 movement_vector = NormalizeVec2(movement_direction) * movement_speed * game->game_time;
-		last_position = position;
-		position = position + movement_vector;
-		SetState(State::Walking);
 	}
 	else {
 		SetState(State::Idle);
 	}
 }
 
-void Player::Draw(Game* game) const
+void Player::Draw(Game* game)
 {
-	if (state != State::Dying) { // already have a switch but i dont want repeat this loop.
-		for (int i = 0; i < 2; i++) {
-			if (weapons[i]) weapons[i]->Draw(game);
-		}
+	if (state != State::Dying and state != State::Dead) {
+		sword.Draw(game);
+		aoe.Draw(game);
 	}
 
 	switch (state) {
@@ -162,11 +167,18 @@ void Player::Draw(Game* game) const
 		break;
 	case State::Dying:
 		game->DrawSprite(dying_sprite, position);
+		break;
+	default: ;
 	}
 }
 
 void Player::HandleInput(const Game* game) {
 	const GamesEngineeringBase::Window& window = game->window;
+
+	// Check that this is the first press, otherwise we toggle invincibility every frame.
+	const bool i_pressed = window.keyPressed('I');
+	if (i_pressed and !i_pressed_last_frame) is_invincible = !is_invincible;
+	i_pressed_last_frame = i_pressed;
 
 	movement_direction = { 0, 0 };
 	if (window.keyPressed('W') or window.keyPressed(VK_UP)) movement_direction.y -= 1.0f;
@@ -198,14 +210,19 @@ void Player::SetState(const State new_state) {
 		walking_sprite.Reset();
 		break;
 	case State::Dying:
+		time_dying = 0;
 		dying_sprite.Reset();
+		break;
+	case State::Dead:
 		break;
 	}
 }
 
-void Player::Hit(float damage) {
+void Player::Hit(const float damage) {
+	if (state == State::Dying or state == State::Dead or is_invincible) return;
+
 	current_health -= damage;
-	if (current_health < 0) {
+	if (current_health <= 0) {
 		SetState(State::Dying);
 	}
 }

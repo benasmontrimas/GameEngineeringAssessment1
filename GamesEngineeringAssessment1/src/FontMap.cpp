@@ -3,11 +3,11 @@
 #include "Sprite.h"
 #include "Game.h"
 
-void FontMap::Init(GamesEngineeringBase::Image* _image, const int w, const int h, const int _chars_per_line) {
-	image = _image;
+void FontMap::Init(const GameImages img, const int w, const int h, const int chars_per_row) {
+	image = img;
 	char_image_width = w;
 	char_image_height = h;
-	chars_per_line = _chars_per_line;
+	chars_per_line = chars_per_row;
 
 	char_sprite.Init(1);
 	char_sprite.images[0] = image;
@@ -17,7 +17,7 @@ void FontMap::Init(GamesEngineeringBase::Image* _image, const int w, const int h
 // TODO: Can add support for new line char, just need to reset x offset and set y offset to the height of the chars.
 void FontMap::DrawString(Game* game, const std::string& string, const Vec2& position)
 {
-	for (int i = 0; i < string.size(); i++) {
+	for (size_t i = 0; i < string.size(); i++) {
 		char c = string[i];
 		if (c == ' ') continue;
 		if (c >= 'a' and c <= 'z') c -= 'a' - 'A'; // Set to the upper case equivalent letter as we don't support lower case.
@@ -25,8 +25,8 @@ void FontMap::DrawString(Game* game, const std::string& string, const Vec2& posi
 
 		const int index_into_font_map = c - '!';
 
-		int x = char_image_width * (index_into_font_map % chars_per_line);
-		int y = char_image_height * (index_into_font_map / chars_per_line);
+		const int x = char_image_width * (index_into_font_map % chars_per_line);
+		const int y = char_image_height * (index_into_font_map / chars_per_line);
 
 		char_sprite.x_offset[0] = x + 1;
 		char_sprite.x_offset[1] = x + char_image_width;
