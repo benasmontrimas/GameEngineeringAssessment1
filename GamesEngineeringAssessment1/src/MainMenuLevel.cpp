@@ -107,9 +107,25 @@ void MainMenuLevel::LoadLevel(Game* game)
 	}
 	else {
 		GameLevel* game_level = new GameLevel;
-
+		// Did not consider vtables. Need to skip past to first data variable.
 		constexpr int data_offset = offsetof(GameLevel, GameLevel::player);
+		// Also need to skip loading the players weapons vtables.
+		constexpr int sword_vtable_offset = data_offset + offsetof(Player, Player::sword);
+		constexpr int aoe_vtable_offset = data_offset + offsetof(Player, Player::aoe);
+
+		const uintptr_t sword_vtable_ptr = reinterpret_cast<uintptr_t*>(&game_level->player.sword)[0];
+		const uintptr_t aoe_vtable_ptr = reinterpret_cast<uintptr_t*>(&game_level->player.aoe)[0];
+
+		int v_table_size = sizeof(void*);
+		// read into the data ignoring the game level vtable
 		fs.read(&reinterpret_cast<char*>(game_level)[data_offset], sizeof(GameLevel) - data_offset);
+
+		uintptr_t* sword_v_table_location = reinterpret_cast<uintptr_t*>(&reinterpret_cast<char*>(game_level)[sword_vtable_offset]);
+		sword_v_table_location[0] = sword_vtable_ptr;
+		
+		uintptr_t* aoe_v_table_location = reinterpret_cast<uintptr_t*>(&reinterpret_cast<char*>(game_level)[aoe_vtable_offset]);
+		aoe_v_table_location[0] = aoe_vtable_ptr;
+
 		game_level->loaded = true;
 		if (!game->SetNextLevel(game_level)) delete game_level;
 	}
