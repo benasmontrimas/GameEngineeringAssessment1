@@ -5,7 +5,7 @@
 #include "Enemy.h"
 #include "HUD.h"
 #include "Level.h"
-#include "Map.h"
+#include "TileMap.h"
 #include "PauseMenu.h"
 #include "EndGameMenu.h"
 #include "PowerUp.h"

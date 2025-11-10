@@ -2,7 +2,7 @@
 #include "Button.h"
 #include "Level.h"
 #include "Sprite.h"
-#include "Map.h"
+#include "TileMap.h"
 #include "GameLevel.h"
 
 class MainMenuLevel : public Level {

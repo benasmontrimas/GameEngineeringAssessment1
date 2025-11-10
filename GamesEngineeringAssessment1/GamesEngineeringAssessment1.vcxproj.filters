@@ -39,7 +39,7 @@
     <ClCompile Include="src\HUD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Map.cpp">
+    <ClCompile Include="src\TileMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Sprite.cpp">
@@ -104,7 +104,7 @@
     <ClInclude Include="src\HUD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Map.h">
+    <ClInclude Include="src\TileMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Weapon.h">

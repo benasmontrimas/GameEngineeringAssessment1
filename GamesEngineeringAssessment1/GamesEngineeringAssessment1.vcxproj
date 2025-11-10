@@ -139,7 +139,7 @@
     <ClCompile Include="src\HUD.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenuLevel.cpp" />
-    <ClCompile Include="src\Map.cpp" />
+    <ClCompile Include="src\TileMap.cpp" />
     <ClCompile Include="src\PauseMenu.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\PowerUp.cpp" />
@@ -164,7 +164,7 @@
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\GameLevel.h" />
     <ClInclude Include="src\MainMenuLevel.h" />
-    <ClInclude Include="src\Map.h" />
+    <ClInclude Include="src\TileMap.h" />
     <ClInclude Include="src\PauseMenu.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\PowerUp.h" />

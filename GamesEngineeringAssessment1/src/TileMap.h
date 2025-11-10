@@ -90,6 +90,8 @@ class TileMap {
 	};
 
 public:
+	~TileMap();
+
 	void Init(Game* game, const std::string& level_path);
 	void Update(const Game* game);
 	void Draw(Game* game);
@@ -109,6 +111,8 @@ public:
 
 	int tilemap_width;
 	int tilemap_height;
+	// These don't really need to be pointers, as we have a fixed screen size, we could just default
+	// to how many tiles fit on screen at max.
 	Sprite** tilemap;
 	bool* has_collision;
 

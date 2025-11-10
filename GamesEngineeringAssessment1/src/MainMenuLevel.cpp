@@ -107,7 +107,9 @@ void MainMenuLevel::LoadLevel(Game* game)
 	}
 	else {
 		GameLevel* game_level = new GameLevel;
-		fs.read(reinterpret_cast<char*>(game_level), sizeof(GameLevel));
+
+		constexpr int data_offset = offsetof(GameLevel, GameLevel::player);
+		fs.read(&reinterpret_cast<char*>(game_level)[data_offset], sizeof(GameLevel) - data_offset);
 		game_level->loaded = true;
 		if (!game->SetNextLevel(game_level)) delete game_level;
 	}

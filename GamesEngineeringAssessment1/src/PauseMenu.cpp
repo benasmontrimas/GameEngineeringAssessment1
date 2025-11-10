@@ -74,7 +74,8 @@ void PauseMenu::SaveLevel(const Game* game)
 	}
 	else {
 		GameLevel* game_level = dynamic_cast<GameLevel*>(game->GetLevel());
-		fs.write(reinterpret_cast<char*>(game_level), sizeof(GameLevel));
+		constexpr int data_offset = offsetof(GameLevel, GameLevel::player);
+		fs.write(&reinterpret_cast<char*>(game_level)[data_offset], sizeof(GameLevel) - data_offset);
 		std::cout << "Saved\n";
 		fs.close();
 	}

@@ -1,7 +1,13 @@
-#include "Map.h"
+#include "TileMap.h"
 #include "Game.h"
 #include <cassert>
 #include <fstream>
+
+TileMap::~TileMap()
+{
+	delete[] has_collision;
+	delete[] tilemap;
+}
 
 void TileMap::Init(Game* game, const std::string& level_path) {
 	GameImages image_offset[TILE_TYPE_COUNT] = {
@@ -285,6 +291,8 @@ void TileMap::Init(Game* game, const std::string& level_path) {
 			tilemap[index] = &tiles[map_layout[index] + lookup_index];
 		}
 	}
+
+	delete[] map_layout;
 
 	float camera_offset_x = static_cast<float>(game->window_width) / 2.0f;
 	float camera_offset_y = static_cast<float>(game->window_height) / 2.0f;
